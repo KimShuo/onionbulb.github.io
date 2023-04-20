@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"jsblog.fun","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":"normal","show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Typora设置图片自动上传七牛云图床并转换url">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Typora设置图片的自动上传保存">
+<meta property="og:url" content="https://jsblog.fun/2023/03/27/Typora%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/index.html">
+<meta property="og:site_name" content="小金的博客">
+<meta property="og:description" content="Typora设置图片自动上传七牛云图床并转换url">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/%E4%B8%83%E7%89%9B%E4%BA%91%E6%A0%A1%E5%9B%AD%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A1%E5%88%92.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230327131108699.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/PicGo%E9%85%8D%E7%BD%AE.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230327133106184.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/20230327133456.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/%E5%88%9B%E5%BB%BA%E7%A9%BA%E9%97%B4.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/Bucket.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/%E7%BB%91%E5%AE%9A%E6%88%90%E5%8A%9F.png">
+<meta property="og:image" content="https://qiniu.jsblog.fun//img/image-20230415155617911.png">
+<meta property="og:image" content="https://qiniu.jsblog.fun//img/image-20230415160705489.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230415181719668.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230327141434940.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/Typora%E8%AE%BE%E7%BD%AE.png">
+<meta property="article:published_time" content="2023-03-27T06:23:00.000Z">
+<meta property="article:modified_time" content="2023-04-16T12:12:10.042Z">
+<meta property="article:author" content="Goldie">
+<meta property="article:tag" content="图床设置">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiniu.jsblog.fun//img/%E4%B8%83%E7%89%9B%E4%BA%91%E6%A0%A1%E5%9B%AD%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A1%E5%88%92.png">
+
+<link rel="canonical" href="https://jsblog.fun/2023/03/27/Typora%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Typora设置图片的自动上传保存 | 小金的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小金的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jsblog.fun/2023/03/27/Typora%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatars.jpg">
+      <meta itemprop="name" content="Goldie">
+      <meta itemprop="description" content="极其稀有。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小金的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Typora设置图片的自动上传保存
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-27 14:23:00" itemprop="dateCreated datePublished" datetime="2023-03-27T14:23:00+08:00">2023-03-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-16 20:12:10" itemprop="dateModified" datetime="2023-04-16T20:12:10+08:00">2023-04-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/markdown/" itemprop="url" rel="index"><span itemprop="name">markdown</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Typora设置图片自动上传七牛云图床并转换url</p>
+<span id="more"></span>
+
+<p>每次使用Typora的时候，总是不敢插入图片。</p>
+<p>因为每次插入图片，你一不小心变动位置或者移动文件，源图片就会失效。</p>
+<p>所以今天我尝试将图片自动上传到储存端，保证图片的永久保存。</p>
+<h2 id="1-准备图床"><a href="#1-准备图床" class="headerlink" title="1. 准备图床"></a>1. 准备图床</h2><p>首先选择一下图床，用于在云端储存我的图片。</p>
+<p>这里我有两个选择：</p>
+<ol>
+<li>阿里云oss：一年9块钱，40GB存储空间。</li>
+</ol>
+<p>​		购买地址：<a target="_blank" rel="noopener" href="https://common-buy.aliyun.com/?spm=5176.7933691.J_5253785160.2.7c9c4c59pucWmL&commodityCode=ossbag#/buy">阿里云oss</a></p>
+<ol start="2">
+<li><p>七牛云：免费，每个月10GB</p>
+<p>七牛云有优惠卷，但是用完和阿里云差不多，也是每个月40GB</p>
+<p>另外，还有一个教育邮箱一年免费40GB的活动，因此我准备使用七牛云来搭建图床。</p>
+<p><a target="_blank" rel="noopener" href="https://marketing.qiniu.com/activity/student_growth?utm_source=notification&utm_medium=banner&utm_content=banner&utm_campaign=%E6%A0%A1%E5%9B%AD%E8%AE%A4%E8%AF%81&_channel_track_key=jpe4Z4cd">七牛云校园开发者成长计划</a></p>
+</li>
+</ol>
+<p>​		它还附赠了好多服务，截图一下：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E4%B8%83%E7%89%9B%E4%BA%91%E6%A0%A1%E5%9B%AD%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A1%E5%88%92.png" alt="七牛云校园开发者计划"></p>
+<p>校园用户免费使用一年，暂时先使用这个作为图床。</p>
+<h2 id="2-安装PicGo并配置七牛云图床"><a href="#2-安装PicGo并配置七牛云图床" class="headerlink" title="2. 安装PicGo并配置七牛云图床"></a>2. 安装PicGo并配置七牛云图床</h2><p>从<a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/picgo/releases">PicGo github</a>下载2.4.0-beta.0版本。</p>
+<p>因为我个人比较喜欢尝鲜新功能，所以选了最新版，追求稳定的可以选择前一个版本稳定版。</p>
+<p>下载完成之后安装、打开：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230327131108699.png" alt="image-20230327131108699"></p>
+<p>PicGo切换到七牛云配置界面：</p>
+<p><img src="http://qiniu.jsblog.fun//img/PicGo%E9%85%8D%E7%BD%AE.png" alt="PicGo配置"></p>
+<p>配置如图所示，</p>
+<p>其中AccessKey和SecretKey需要到其幸运右上角头像这里进行查找：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230327133106184.png" alt="image-20230327133106184"></p>
+<p>点击后复制这两项：</p>
+<p><img src="http://qiniu.jsblog.fun//img/20230327133456.png" alt="20230327133456"></p>
+<p>Bucket是创建空间的空间名，我们先创建空间：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E5%88%9B%E5%BB%BA%E7%A9%BA%E9%97%B4.png" alt="创建空间"></p>
+<p>Bucket是这个：</p>
+<p><img src="http://qiniu.jsblog.fun//img/Bucket.png" alt="Bucket"></p>
+<p>设定访问网址：</p>
+<p>进入空间最后的域名管理-&gt;绑定域名</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png" alt="绑定域名"></p>
+<p>然后配置一下CNAME，这里有官方教程：<a target="_blank" rel="noopener" href="https://developer.qiniu.com/fusion/kb/1322/how-to-configure-cname-domain-name">CNAME如何配置</a>，配置成功之后如下图：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E7%BB%91%E5%AE%9A%E6%88%90%E5%8A%9F.png" alt="绑定成功"></p>
+<p>注意！存储区域一定要根据自己存储区域来设置：</p>
+<p>七牛云的存储区域（华东 z0，华北 z1，华南 z2，北美 na0，东南亚 as0 ），一定要根据你空间所在的区域，填对应的代码。</p>
+<p>如果不存储区域设置错误，它会显示如下错误（血与泪的教训）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">2023-03-27 13:37:12 [PicGo ERROR] </span><br><span class="line">------Error Stack Begin------</span><br><span class="line">Error: read file  error</span><br><span class="line">    at D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:38189</span><br><span class="line">    at async Promise.all (index 0)</span><br><span class="line">    at async Object.handle (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:37138)</span><br><span class="line">    at async $e.doTransform (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:16679)</span><br><span class="line">    at async $e.start (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:15916)</span><br><span class="line">    at async Tt.upload (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:71270)</span><br><span class="line">    at async Object.upload (D:\PicGo\resources\app.asar\background.js:2:661590)</span><br><span class="line">    at async zn (D:\PicGo\resources\app.asar\background.js:2:664240)</span><br><span class="line">    at async D:\PicGo\resources\app.asar\background.js:2:665314</span><br><span class="line">-------Error Stack End------- </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-安装PicGo-core命令行-2023-04-15"><a href="#2-安装PicGo-core命令行-2023-04-15" class="headerlink" title="2. 安装PicGo-core命令行(2023-04-15)"></a>2. 安装PicGo-core命令行(2023-04-15)</h2><p>经过这半个多月的使用，我发现PicGo app经常会卡死，第一次打开app也比较慢，经常会占用大量资源。</p>
+<p>所以我考虑使用PicGo-core，命令行、轻量化、占用资源更少。</p>
+<p>先从Typora处安装，出现ftp错误</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230415155617911.png" alt="image-20230415155617911"></p>
+<p>会出现这个错误：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230415160705489.png" alt="image-20230415160705489"></p>
+<p>下载好了也会出现错误，所以我选择手动安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#全局安装PicGo-core</span></span><br><span class="line">&gt; npm install picgo -g</span><br><span class="line">&gt; picgo <span class="comment">#试一下安装是否成功，成果的话会出现命令选项</span></span><br><span class="line"><span class="comment">#如下：</span></span><br><span class="line">C:\Users\用户名&gt;picgo</span><br><span class="line">Usage: picgo [options] [<span class="built_in">command</span>]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -v, --version                        output the version number</span><br><span class="line">  -d, --debug                          debug mode</span><br><span class="line">  -s, --silent                         silent mode</span><br><span class="line">  -c, --config &lt;path&gt;                  <span class="built_in">set</span> config path</span><br><span class="line">  -p, --proxy &lt;url&gt;                    <span class="built_in">set</span> proxy <span class="keyword">for</span> uploading</span><br><span class="line">  -h, --<span class="built_in">help</span>                           display <span class="built_in">help</span> <span class="keyword">for</span> <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  install|add [options] &lt;plugins...&gt;   install picgo plugin</span><br><span class="line">  uninstall|<span class="built_in">rm</span> &lt;plugins...&gt;            uninstall picgo plugin</span><br><span class="line">  update [options] &lt;plugins...&gt;        update picgo plugin</span><br><span class="line">  <span class="built_in">set</span>|config &lt;module&gt; [name]           configure config of picgo modules</span><br><span class="line">  upload|u [input...]                  upload, go go go</span><br><span class="line">  use [module]                         use modules of picgo</span><br><span class="line">  init [options] &lt;template&gt; [project]  create picgo plugin<span class="string">&#x27;s development templates</span></span><br><span class="line"><span class="string">  i18n [lang]                          change picgo language</span></span><br><span class="line"><span class="string">  help [command]                       display help for command</span></span><br></pre></td></tr></table></figure>
+
+<p>手动安装后进入<code>C:\Users\用户名\.picgo</code>修改配置文件<code>config.json</code>修改配置文件：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;picBed&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;current&quot;</span><span class="punctuation">:</span> <span class="string">&quot;qiniu&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;qiniu&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;accessKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这里输入七牛云密钥的AK&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;secretKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这里输入七牛云密钥的SK&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bucket&quot;</span><span class="punctuation">:</span> <span class="string">&quot;输入你的域名空间名称&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;输入你的图床存储域名&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;area&quot;</span><span class="punctuation">:</span> <span class="string">&quot;填写区域代码&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;options&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;img/ 这里可以写你的储存后缀&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;picgoPlugins&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就配置完成了，然后使用Typora测试一下</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230415181719668.png" alt="image-20230415181719668"></p>
+<p>验证成功即可在Typora中使用，</p>
+<h3 id="PicGo-core出现的问题："><a href="#PicGo-core出现的问题：" class="headerlink" title="PicGo-core出现的问题："></a>PicGo-core出现的问题：</h3><h4 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h4><p>如果上传过后自动输入的url文件后缀名变成了<code>pngundefined </code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://XXXX.COM//img/image-XXXX.pngundefined</span><br></pre></td></tr></table></figure>
+
+<p>是由于<code>config.json</code>文件未包含<code> &quot;options&quot;: &quot;&quot;,</code>，即使设置成空的也要加入，不然就会这样。</p>
+<h4 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h4><p>npm安装的时候：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm WARN deprecated @types/bson@4.2.0: This is a stub types definition. bson provides its own type definitions, so you do not need this installed.</span><br></pre></td></tr></table></figure>
+
+<p>经测试，这样我安装没什么问题，只是个警告而已。</p>
+<p>也可以更新一下npm</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm -v</span><br><span class="line">npm install -g npm</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-配置Typora"><a href="#3-配置Typora" class="headerlink" title="3. 配置Typora"></a>3. 配置Typora</h2><p>这是配置的最后一步，终于要完成自动上传图片了。</p>
+<p>进入Typora，选择偏好设置：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230327141434940.png" alt="image-20230327141434940"></p>
+<p>进入偏好设置后选择图像，进行进一步设置</p>
+<p><img src="http://qiniu.jsblog.fun//img/Typora%E8%AE%BE%E7%BD%AE.png"></p>
+<h2 id="4-测试能否顺利上传"><a href="#4-测试能否顺利上传" class="headerlink" title="4. 测试能否顺利上传"></a>4. 测试能否顺利上传</h2><p>终于！Typora的自动上传图片功能配置完成！</p>
+<p>向Typora里粘贴一下图片试试能否正常上传。</p>
+<p>上传成功后可以在PicGo相册中查看到上传的图片。</p>
+<p>注意：一定要开着PicGo程序哦~</p>
+
+    </div>
+
+    
+    
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px; padding-top: 10px;">--------------------------------------- <i class="fa fa-heart"></i> The End <i class="fa fa-heart"></i> ---------------------------------------  </div>
+    
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%9B%BE%E5%BA%8A%E8%AE%BE%E7%BD%AE/" <i class="fa fa-tag"></i> 图床设置</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/03/21/%E5%B0%86%E6%96%B0%E5%BB%BAmarkdown%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0%E9%BC%A0%E6%A0%87%E8%8F%9C%E5%8D%95%E6%A0%8F/" rel="prev" title="(win11)将新建markdown文件添加到鼠标菜单栏">
+      <i class="fa fa-chevron-left"></i> (win11)将新建markdown文件添加到鼠标菜单栏
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/03/27/hexo%E5%8F%91%E7%94%9Ferror%EF%BC%9Aspawn%20failed%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" rel="next" title="hexo发生error：spawn failed错误的解决方法">
+      hexo发生error：spawn failed错误的解决方法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81ODM1Ni8zNDgxOQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%87%86%E5%A4%87%E5%9B%BE%E5%BA%8A"><span class="nav-number">1.</span> <span class="nav-text">1. 准备图床</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85PicGo%E5%B9%B6%E9%85%8D%E7%BD%AE%E4%B8%83%E7%89%9B%E4%BA%91%E5%9B%BE%E5%BA%8A"><span class="nav-number">2.</span> <span class="nav-text">2. 安装PicGo并配置七牛云图床</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85PicGo-core%E5%91%BD%E4%BB%A4%E8%A1%8C-2023-04-15"><span class="nav-number">3.</span> <span class="nav-text">2. 安装PicGo-core命令行(2023-04-15)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PicGo-core%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98%EF%BC%9A"><span class="nav-number">3.1.</span> <span class="nav-text">PicGo-core出现的问题：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%981"><span class="nav-number">3.1.1.</span> <span class="nav-text">问题1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%982"><span class="nav-number">3.1.2.</span> <span class="nav-text">问题2</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AETypora"><span class="nav-number">4.</span> <span class="nav-text">3. 配置Typora</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%B5%8B%E8%AF%95%E8%83%BD%E5%90%A6%E9%A1%BA%E5%88%A9%E4%B8%8A%E4%BC%A0"><span class="nav-number">5.</span> <span class="nav-text">4. 测试能否顺利上传</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Goldie"
+      src="/images/avatars.jpg">
+  <p class="site-author-name" itemprop="name">Goldie</p>
+  <div class="site-description" itemprop="description">极其稀有。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+  
+  <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+  <div class="widget-wrap">
+      <div id="myCanvasContainer" class="widget tagcloud">
+          <canvas width="220" height="250" id="resCanvas" style="width=100%">
+              <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ai%E7%BB%98%E5%9B%BE/" rel="tag">Ai绘图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Claude/" rel="tag">Claude</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Next/" rel="tag">Next</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VPS/" rel="tag">VPS</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/office-copilot/" rel="tag">office copilot</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%81%E4%B8%9A%E9%82%AE%E7%AE%B1/" rel="tag">企业邮箱</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E5%B0%8F%E7%AB%99/" rel="tag">博客小站</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E7%BE%8E%E5%8C%96/" rel="tag">博客美化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%BA%8A%E8%AE%BE%E7%BD%AE/" rel="tag">图床设置</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81/" rel="tag">学生认证</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%A3%E5%86%B3%E6%8A%A5%E9%94%99/" rel="tag">解决报错</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98/" rel="tag">阿里云盘</a><span class="tag-list-count">1</span></li></ul>
+          </canvas>
+      </div>
+  </div>
+  
+
+  </div>
+
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Goldie</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">37k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">34 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

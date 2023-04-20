@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"jsblog.fun","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":"normal","show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="通过修改注册表的方式提前体验office copilot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通过修改注册表使用office copilot">
+<meta property="og:url" content="https://jsblog.fun/2023/03/30/office%20copilot%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="小金的博客">
+<meta property="og:description" content="通过修改注册表的方式提前体验office copilot">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230330203047880.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/%E5%8F%96%E6%B6%88%E9%A2%84%E8%A7%88%E4%BD%93%E9%AA%8C%E8%AE%A1%E5%88%92.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/%E6%B3%A8%E5%86%8C%E8%A1%A8%E4%BF%AE%E6%94%B911.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/word%E6%9B%B4%E6%96%B0.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/2305.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230330205328747.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/L01I2@%7D%5BJPK7FBSGEKK%5DBMC.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/%E6%AD%A3%E5%BC%8F%E4%BD%BF%E7%94%A8.png">
+<meta property="article:published_time" content="2023-03-30T13:30:00.000Z">
+<meta property="article:modified_time" content="2023-04-16T12:11:33.438Z">
+<meta property="article:author" content="Goldie">
+<meta property="article:tag" content="office copilot">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiniu.jsblog.fun//img/image-20230330203047880.png">
+
+<link rel="canonical" href="https://jsblog.fun/2023/03/30/office%20copilot%E4%BD%BF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>通过修改注册表使用office copilot | 小金的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小金的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jsblog.fun/2023/03/30/office%20copilot%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatars.jpg">
+      <meta itemprop="name" content="Goldie">
+      <meta itemprop="description" content="极其稀有。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小金的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          通过修改注册表使用office copilot
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-30 21:30:00" itemprop="dateCreated datePublished" datetime="2023-03-30T21:30:00+08:00">2023-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-16 20:11:33" itemprop="dateModified" datetime="2023-04-16T20:11:33+08:00">2023-04-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Daily/" itemprop="url" rel="index"><span itemprop="name">Daily</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>通过修改注册表的方式提前体验office copilot</p>
+<span id="more"></span>
+
+<p><strong>2023年4月14日更新：</strong></p>
+<p><strong>此方法已经失效了，现在即使注册表正确，也不会显示copilot，等待正式版本吧。</strong></p>
+<h1 id="通过修改注册表使用office-copilot"><a href="#通过修改注册表使用office-copilot" class="headerlink" title="通过修改注册表使用office copilot"></a>通过修改注册表使用office copilot</h1><p>学习于：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ranxi169/p/17272151.html">https://www.cnblogs.com/ranxi169/p/17272151.html</a></p>
+<p>以及：<a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv22739951/">https://www.bilibili.com/read/cv22739951/</a></p>
+<p>第一步要确定你的Mcrosoft365的版本，只有个人版、家庭版和企业版（E5）才可以用（据说是这样，我是买的企业版。）</p>
+<h2 id="1-先退出预览体验计划"><a href="#1-先退出预览体验计划" class="headerlink" title="1. 先退出预览体验计划"></a>1. 先退出预览体验计划</h2><p>如果你出现下一步中的修改注册表的</p>
+<p><strong>UpdateChannel</strong>的数据一直自动修改成原来的数值，请一定要进行这一步</p>
+<p>在搜搜框搜索预览体验计划：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230330203047880.png" alt="image-20230330203047880"></p>
+<p>然后取消掉勾勾：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E5%8F%96%E6%B6%88%E9%A2%84%E8%A7%88%E4%BD%93%E9%AA%8C%E8%AE%A1%E5%88%92.png" alt="取消预览体验计划"></p>
+<p>然后再修改注册表</p>
+<h2 id="2-修改注册表以更新word到2305"><a href="#2-修改注册表以更新word到2305" class="headerlink" title="2. 修改注册表以更新word到2305"></a>2. 修改注册表以更新word到2305</h2><p>首先打开注册表编辑器：</p>
+<p>win+R打开运行后输入regedit</p>
+<p>进入到注册表的</p>
+<blockquote>
+<p>计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\ClickToRun\Configuration</p>
+</blockquote>
+<p>修改以下内容</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E6%B3%A8%E5%86%8C%E8%A1%A8%E4%BF%AE%E6%94%B911.png" alt="注册表修改11"></p>
+<blockquote>
+<p>频道和ID对应关系，转载自<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ranxi169/p/17272151.html">孤飞</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">AudienceId                           | AudienceData       | Channel</span><br><span class="line">EA4A4090-DE26-49D7-93C1-91BFF9E53FC3 | Dogfood::DevMain</span><br><span class="line">F3260CF1-A92C-4C75-B02E-D64C0A86A968 | Dogfood::CC</span><br><span class="line">834504CC-DC55-4C6D-9E71-E024D0253F6D | Dogfood::FRDC</span><br><span class="line">C4A7726F-06EA-48E2-A13A-9D78849EB706 | Dogfood::DCEXT</span><br><span class="line">B61285DD-D9F7-41F2-9757-8F61CBA4E9C8 | Microsoft::DevMain</span><br><span class="line">5462EEE5-1E97-495B-9370-853CD873BB07 | Microsoft::CC</span><br><span class="line">9A3B7FF2-58ED-40FD-ADD5-1E5158059D1C | Microsoft::FRDC</span><br><span class="line">F4F024C8-D611-4748-A7E0-02B6E754C0FE | Microsoft::DC</span><br><span class="line">1D2D2EA6-1680-4C56-AC58-A441C8C24FF9 | Microsoft::LTSC</span><br><span class="line">5440FD1F-7ECB-4221-8110-145EFAA6372F | Insiders::DevMain  | Beta</span><br><span class="line">64256AFE-F5D9-4F86-8936-8840A6A4F5BE | Insiders::CC       | Current Preview</span><br><span class="line">B8F9B850-328D-4355-9145-C59439A0C4CF | Insiders::FRDC     | Semi-Annual Preview</span><br><span class="line">492350F6-3A01-4F97-B9C0-C7C6DDF67D60 | Production::CC     | Current</span><br><span class="line">55336B82-A18D-4DD6-B5F6-9E5095C314A6 | Production::MEC    | Monthly Enterprise</span><br><span class="line">7FFBC6BF-BC32-4F92-8982-F9DD17FD3114 | Production::DC     | Semi-Annual</span><br><span class="line">F2E724C1-748F-4B47-8FB8-8E0D210E9208 | Production::LTSC   | Perpetual2019</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>将以下内容的值修改</p>
+<p>AudienceData -&gt; Dogfood::DevMain</p>
+<p>AudienceID      -&gt; ea4a4090-de26-49d7-93c1-91bff9e53fc3</p>
+<p>CDNbaseurl     -&gt; <a target="_blank" rel="noopener" href="http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3">http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3</a></p>
+<p>UpdateChannel与Updateurl -&gt; <a target="_blank" rel="noopener" href="http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3">http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3</a></p>
+<h2 id="3-更新word"><a href="#3-更新word" class="headerlink" title="3. 更新word"></a>3. 更新word</h2><p>打开一个随便word文档</p>
+<p>文件-&gt;账户-&gt;更新</p>
+<p><img src="http://qiniu.jsblog.fun//img/word%E6%9B%B4%E6%96%B0.png" alt="word更新"></p>
+<p>应该会自动进行更新，将版本更新到2305：</p>
+<p><img src="http://qiniu.jsblog.fun//img/2305.png" alt="2305"></p>
+<h2 id="4-修改注册表以开启copliot"><a href="#4-修改注册表以开启copliot" class="headerlink" title="4. 修改注册表以开启copliot"></a>4. 修改注册表以开启copliot</h2><p>进入注册表中的目录：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">计算机\HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\ExternalFeatureOverrides\word</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>直接放在地址栏里就可以，我当时是看不到这个位置的。</p>
+</blockquote>
+<p>新建一个字符串&#x2F;值：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230330205328747.png" alt="image-20230330205328747"></p>
+<blockquote>
+<p>数值名称：Microsoft.Office.Word.CoPilotExperiment   数值数据：true</p>
+</blockquote>
+<p>至此，重启word应该就能够使用copliot了。</p>
+<h2 id="5-正式使用copliot"><a href="#5-正式使用copliot" class="headerlink" title="5. 正式使用copliot"></a>5. 正式使用copliot</h2><p>重启之后，出现copliot即为成功</p>
+<p><img src="http://qiniu.jsblog.fun//img/L01I2@%7D%5BJPK7FBSGEKK%5DBMC.png" alt="L01I2@}[JPK7FBSGEKK]BMC"></p>
+<p>但是美中不足的是，现在的copliot只能用英语，而且我测试的时候，感觉copliot比较智障。</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E6%AD%A3%E5%BC%8F%E4%BD%BF%E7%94%A8.png" alt="正式使用"></p>
+<p>至此，享受你的Copliot吧！</p>
+
+    </div>
+
+    
+    
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px; padding-top: 10px;">--------------------------------------- <i class="fa fa-heart"></i> The End <i class="fa fa-heart"></i> ---------------------------------------  </div>
+    
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/office-copilot/" <i class="fa fa-tag"></i> office copilot</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/03/27/hexo%E5%8F%91%E7%94%9Ferror%EF%BC%9Aspawn%20failed%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" rel="prev" title="hexo发生error：spawn failed错误的解决方法">
+      <i class="fa fa-chevron-left"></i> hexo发生error：spawn failed错误的解决方法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/01/%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8Ccolab%E4%BB%A5%E5%8F%8Astabble%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/" rel="next" title="stable diffusion的colab部署">
+      stable diffusion的colab部署 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81ODM1Ni8zNDgxOQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E4%BF%AE%E6%94%B9%E6%B3%A8%E5%86%8C%E8%A1%A8%E4%BD%BF%E7%94%A8office-copilot"><span class="nav-number">1.</span> <span class="nav-text">通过修改注册表使用office copilot</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%85%88%E9%80%80%E5%87%BA%E9%A2%84%E8%A7%88%E4%BD%93%E9%AA%8C%E8%AE%A1%E5%88%92"><span class="nav-number">1.1.</span> <span class="nav-text">1. 先退出预览体验计划</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9%E6%B3%A8%E5%86%8C%E8%A1%A8%E4%BB%A5%E6%9B%B4%E6%96%B0word%E5%88%B02305"><span class="nav-number">1.2.</span> <span class="nav-text">2. 修改注册表以更新word到2305</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%9B%B4%E6%96%B0word"><span class="nav-number">1.3.</span> <span class="nav-text">3. 更新word</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BF%AE%E6%94%B9%E6%B3%A8%E5%86%8C%E8%A1%A8%E4%BB%A5%E5%BC%80%E5%90%AFcopliot"><span class="nav-number">1.4.</span> <span class="nav-text">4. 修改注册表以开启copliot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%AD%A3%E5%BC%8F%E4%BD%BF%E7%94%A8copliot"><span class="nav-number">1.5.</span> <span class="nav-text">5. 正式使用copliot</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Goldie"
+      src="/images/avatars.jpg">
+  <p class="site-author-name" itemprop="name">Goldie</p>
+  <div class="site-description" itemprop="description">极其稀有。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+  
+  <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+  <div class="widget-wrap">
+      <div id="myCanvasContainer" class="widget tagcloud">
+          <canvas width="220" height="250" id="resCanvas" style="width=100%">
+              <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ai%E7%BB%98%E5%9B%BE/" rel="tag">Ai绘图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Claude/" rel="tag">Claude</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Next/" rel="tag">Next</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VPS/" rel="tag">VPS</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/office-copilot/" rel="tag">office copilot</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%81%E4%B8%9A%E9%82%AE%E7%AE%B1/" rel="tag">企业邮箱</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E5%B0%8F%E7%AB%99/" rel="tag">博客小站</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E7%BE%8E%E5%8C%96/" rel="tag">博客美化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%BA%8A%E8%AE%BE%E7%BD%AE/" rel="tag">图床设置</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81/" rel="tag">学生认证</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%A3%E5%86%B3%E6%8A%A5%E9%94%99/" rel="tag">解决报错</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98/" rel="tag">阿里云盘</a><span class="tag-list-count">1</span></li></ul>
+          </canvas>
+      </div>
+  </div>
+  
+
+  </div>
+
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Goldie</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">37k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">34 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

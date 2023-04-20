@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"jsblog.fun","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":"normal","show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="使用Azure for students学生订阅创建虚拟机，避免踩坑。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Azure微软云(Azure for students)虚拟机创建">
+<meta property="og:url" content="https://jsblog.fun/2023/04/08/Azure%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="小金的博客">
+<meta property="og:description" content="使用Azure for students学生订阅创建虚拟机，避免踩坑。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408145948988.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408150028958.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408151015047.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408151049003.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408151253855.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408164710179.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408164846616.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408165122802.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408165321524.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408165405728.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408165704167.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408143959587.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408144100634.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408144122554.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408144155155.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408144537655.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408144602217.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408170249193.png">
+<meta property="article:published_time" content="2023-04-08T09:07:00.000Z">
+<meta property="article:modified_time" content="2023-04-16T12:09:54.944Z">
+<meta property="article:author" content="Goldie">
+<meta property="article:tag" content="VPS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiniu.jsblog.fun//img/image-20230408145948988.png">
+
+<link rel="canonical" href="https://jsblog.fun/2023/04/08/Azure%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Azure微软云(Azure for students)虚拟机创建 | 小金的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小金的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jsblog.fun/2023/04/08/Azure%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatars.jpg">
+      <meta itemprop="name" content="Goldie">
+      <meta itemprop="description" content="极其稀有。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小金的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Azure微软云(Azure for students)虚拟机创建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-08 17:07:00" itemprop="dateCreated datePublished" datetime="2023-04-08T17:07:00+08:00">2023-04-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-16 20:09:54" itemprop="dateModified" datetime="2023-04-16T20:09:54+08:00">2023-04-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Virtual-Machine/" itemprop="url" rel="index"><span itemprop="name">Virtual Machine</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>使用Azure for students学生订阅创建虚拟机，避免踩坑。</p>
+<span id="more"></span>
+
+<h3 id="创建虚拟机"><a href="#创建虚拟机" class="headerlink" title="创建虚拟机"></a>创建虚拟机</h3><p>这里有几个坑，血泪教训，请一定要注意，不注意就会扣免费的100刀</p>
+<p>想看看自己的余额还有多少，可以进入<a target="_blank" rel="noopener" href="https://www.microsoftazuresponsorships.com/Balance">Azure余额查询</a>然后点击Usage，就可以看自己扣钱的是哪些方面，</p>
+<p>首先，需要注意的是，如果从免费服务里创建两个虚拟机，地区会被限定，但是会提示免费750h：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408145948988.png" alt="image-20230408145948988"></p>
+<p>点击创建后会显示这个</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408150028958.png" alt="image-20230408150028958"></p>
+<p>区域会显示只有两个可以选择，而且这两个据我观察是延迟比较高的地区。</p>
+<p>想看看自己延迟最低的地区，可以利用这个<a target="_blank" rel="noopener" href="https://www.azurespeed.com/Azure/Latency">Azure测速网站</a></p>
+<p>延迟高的地区虚拟机不好用，所以我们选择自己创建延迟低地区的资源</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408151015047.png" alt="image-20230408151015047"></p>
+<p>创建虚拟机</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408151049003.png" alt="image-20230408151049003"></p>
+<h4 id="第一个坑：修改可用性选项"><a href="#第一个坑：修改可用性选项" class="headerlink" title="第一个坑：修改可用性选项"></a>第一个坑：修改可用性选项</h4><p>由于Azure的静态IP地址也要收费的，如果不修改可用性选项就只能使用静态IP，这个是要付费的。</p>
+<p>Azure for students提供的是免费动态ip，所以我们要改成动态IP，而动态IP对可用性选项有要求。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408151253855.png" alt="image-20230408151253855"></p>
+<p>我们选择无需基础结构冗余</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408164710179.png" alt="image-20230408164710179"></p>
+<p>选择这个选项后才能选择动态IP。</p>
+<p>另外还有一点，就是大小必须选择B1s，不然也不会免费的。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408164846616.png" alt="image-20230408164846616"></p>
+<p>然后填自己的管理员账户，登录方式等。</p>
+<p>入站端口我选择的是SSH(22)，ssh是我最熟悉的登陆方式。</p>
+<p>然后进行下一步，查看磁盘。</p>
+<h4 id="第二个坑，磁盘大小必须为64G"><a href="#第二个坑，磁盘大小必须为64G" class="headerlink" title="第二个坑，磁盘大小必须为64G"></a>第二个坑，磁盘大小必须为64G</h4><p>进入磁盘选项后，一定要将磁盘重设为64GB，不然使用磁盘也会产生费用。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408165122802.png" alt="image-20230408165122802"></p>
+<p>然后进入网络选项卡，新建IP</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408165321524.png" alt="image-20230408165321524"></p>
+<p>将IP设置为动态IP</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408165405728.png" alt="image-20230408165405728"></p>
+<p>点击确定，查看并创建虚拟机。</p>
+<p>至此，虚拟机算是创建完了。</p>
+<h4 id="第三个坑，不要使用任何额外服务"><a href="#第三个坑，不要使用任何额外服务" class="headerlink" title="第三个坑，不要使用任何额外服务"></a>第三个坑，不要使用任何额外服务</h4><p>创建完成后，去所有资源选项卡看一下自己的所有资源，一定要把网络监视器给删除掉。这也是需要付费的，虽然价格不高。</p>
+<p>这些ID一般是NetworkerWatcher_ID，进入到NetworkerWatcherRG资源组，选中，点击右上角的删除，删除网络监视器，拒绝付费。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408165704167.png" alt="image-20230408165704167"></p>
+<p><strong>注意！一定不要手欠开启任何提示的服务，不然就会开始付费！</strong></p>
+<p>保持不动就不会付费。</p>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>登录就不用说了吧，我使用的是Xshell，所以只要新建窗口，输入Azure给的账号和密码就可以登陆了。（端口默认22）</p>
+<h3 id="使用root登录"><a href="#使用root登录" class="headerlink" title="使用root登录"></a>使用root登录</h3><p>Azure虚拟机是禁用了root通过ssh密码登录的，所以我们要先给root设置个密码，通过ssh登录到创建的自己的账户后，再登录root。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#如何修改root密码并用root登录</span></span><br><span class="line"><span class="comment">#登录到服务器后，试用如下命令修改root密码就可以登录啦</span></span><br><span class="line">$ sudo passwd root</span><br><span class="line"><span class="comment">#修改密码为自己想要的密码</span></span><br><span class="line">$ su</span><br><span class="line"><span class="comment">#输入密码后就切换为root用户了</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置免密码登录"><a href="#设置免密码登录" class="headerlink" title="设置免密码登录"></a>设置免密码登录</h3><p>我使用的是Xshell，这样进行设置</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408143959587.png" alt="image-20230408143959587"></p>
+<p>新建用户密钥生成向导，然后基本上保持默认就可以了</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144100634.png" alt="image-20230408144100634"></p>
+<p>然后下一步</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144122554.png" alt="image-20230408144122554"></p>
+<p>然后输入密码（建议输入）</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144155155.png" alt="image-20230408144155155"></p>
+<p>然后可以保存公钥或者保存为文件。</p>
+<p>然后使用Xftp将其传输到服务器中，移动到~&#x2F;.ssh目录下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">mv</span> id_rsa_2048.pub ~/.ssh/</span><br><span class="line">$ <span class="built_in">cd</span> ~/.ssh</span><br><span class="line">$ <span class="built_in">cat</span> id_rsa_2048.pub &gt;&gt;authorized_keys</span><br><span class="line"><span class="comment">#.ssh和authorized_keys的权限要正确</span></span><br><span class="line">$ <span class="built_in">chmod</span> 700 .ssh</span><br><span class="line">$ <span class="built_in">chmod</span> 600 .ssh/authorized_keys</span><br><span class="line"><span class="comment">#OK！</span></span><br></pre></td></tr></table></figure>
+
+<p>下面通过Xshell使用密钥登录</p>
+<p>选择Public Key</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144537655.png" alt="image-20230408144537655"></p>
+<p>然后输入账号密码，点击确定</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144602217.png" alt="image-20230408144602217"></p>
+<p>回去可以把密码删除，把password选项取消勾选，就只能通过密钥登录啦！</p>
+<p>另外，要记得把<code>/etc/ssh/sshd_config</code>下的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PasswordAuthentication yes  -&gt; no</span><br></pre></td></tr></table></figure>
+
+<p>然后重启ssh服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl restart sshd.service</span><br></pre></td></tr></table></figure>
+
+<p>即可！下面就只能用密钥登录了。</p>
+<h3 id="设置登录端口仅自己的IP访问"><a href="#设置登录端口仅自己的IP访问" class="headerlink" title="设置登录端口仅自己的IP访问"></a>设置登录端口仅自己的IP访问</h3><p>打开Azure网络管理面板，修改相关规则，设置为仅自己的IP地址。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408170249193.png" alt="image-20230408170249193"></p>
+<p>设置成这样，保存就可以了，不要动其他的地方。</p>
+<p>可以使用自己的虚拟机啦，每个月据传有15&#x2F;20G免费流量，多的要付费，对于个人来说，用上那个100刀的免费额度，每个月有75-80G左右，对我来说是够用了。</p>
+
+    </div>
+
+    
+    
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px; padding-top: 10px;">--------------------------------------- <i class="fa fa-heart"></i> The End <i class="fa fa-heart"></i> ---------------------------------------  </div>
+    
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/VPS/" <i class="fa fa-tag"></i> VPS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/02/Github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81%E7%94%B3%E8%AF%B7%E8%AE%B0%E5%BD%95/" rel="prev" title="Github学生认证记录">
+      <i class="fa fa-chevron-left"></i> Github学生认证记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/08/V2ray+TLS+websocket+cdn%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/" rel="next" title="V2ray+tls+websocket+cdn代理服务器搭建">
+      V2ray+tls+websocket+cdn代理服务器搭建 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81ODM1Ni8zNDgxOQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-number">1.</span> <span class="nav-text">创建虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%9D%91%EF%BC%9A%E4%BF%AE%E6%94%B9%E5%8F%AF%E7%94%A8%E6%80%A7%E9%80%89%E9%A1%B9"><span class="nav-number">1.1.</span> <span class="nav-text">第一个坑：修改可用性选项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%9D%91%EF%BC%8C%E7%A3%81%E7%9B%98%E5%A4%A7%E5%B0%8F%E5%BF%85%E9%A1%BB%E4%B8%BA64G"><span class="nav-number">1.2.</span> <span class="nav-text">第二个坑，磁盘大小必须为64G</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%9D%91%EF%BC%8C%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8%E4%BB%BB%E4%BD%95%E9%A2%9D%E5%A4%96%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.3.</span> <span class="nav-text">第三个坑，不要使用任何额外服务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BB%E5%BD%95"><span class="nav-number">2.</span> <span class="nav-text">登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8root%E7%99%BB%E5%BD%95"><span class="nav-number">3.</span> <span class="nav-text">使用root登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%85%8D%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95"><span class="nav-number">4.</span> <span class="nav-text">设置免密码登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%99%BB%E5%BD%95%E7%AB%AF%E5%8F%A3%E4%BB%85%E8%87%AA%E5%B7%B1%E7%9A%84IP%E8%AE%BF%E9%97%AE"><span class="nav-number">5.</span> <span class="nav-text">设置登录端口仅自己的IP访问</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Goldie"
+      src="/images/avatars.jpg">
+  <p class="site-author-name" itemprop="name">Goldie</p>
+  <div class="site-description" itemprop="description">极其稀有。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+  
+  <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+  <div class="widget-wrap">
+      <div id="myCanvasContainer" class="widget tagcloud">
+          <canvas width="220" height="250" id="resCanvas" style="width=100%">
+              <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ai%E7%BB%98%E5%9B%BE/" rel="tag">Ai绘图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Claude/" rel="tag">Claude</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Next/" rel="tag">Next</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VPS/" rel="tag">VPS</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/office-copilot/" rel="tag">office copilot</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%81%E4%B8%9A%E9%82%AE%E7%AE%B1/" rel="tag">企业邮箱</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E5%B0%8F%E7%AB%99/" rel="tag">博客小站</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E7%BE%8E%E5%8C%96/" rel="tag">博客美化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%BA%8A%E8%AE%BE%E7%BD%AE/" rel="tag">图床设置</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81/" rel="tag">学生认证</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%A3%E5%86%B3%E6%8A%A5%E9%94%99/" rel="tag">解决报错</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98/" rel="tag">阿里云盘</a><span class="tag-list-count">1</span></li></ul>
+          </canvas>
+      </div>
+  </div>
+  
+
+  </div>
+
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Goldie</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">37k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">34 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

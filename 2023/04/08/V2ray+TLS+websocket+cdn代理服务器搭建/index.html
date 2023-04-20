@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"jsblog.fun","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":"normal","show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="最近有了自己的云服务器（Azure微软云，我的部署过程请看之前的博客），所以想着借助于代理隐藏自己的IP，又怕自己的服务器IP被墙了，所以尝试搭建一个安全系数比较高的代理服务器。 我所采用的是V2ray+TLS+websocket+cdn加速的策略。cdn是为了在最严格的阶段，或者说自己的IP已经被墙了的阶段让它可用。日常不准备使用CDN加速。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="V2ray+tls+websocket+cdn代理服务器搭建">
+<meta property="og:url" content="https://jsblog.fun/2023/04/08/V2ray+TLS+websocket+cdn%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="小金的博客">
+<meta property="og:description" content="最近有了自己的云服务器（Azure微软云，我的部署过程请看之前的博客），所以想着借助于代理隐藏自己的IP，又怕自己的服务器IP被墙了，所以尝试搭建一个安全系数比较高的代理服务器。 我所采用的是V2ray+TLS+websocket+cdn加速的策略。cdn是为了在最严格的阶段，或者说自己的IP已经被墙了的阶段让它可用。日常不准备使用CDN加速。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408173028739.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408183048906.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408183143011.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408183408836.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408183611426.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408184424095.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408184516869.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408185518894.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408192350701.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408195301274.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408195412270.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/image-20230408195953236.png">
+<meta property="og:image" content="http://qiniu.jsblog.fun//img/Cloudflares.png">
+<meta property="article:published_time" content="2023-04-08T10:14:00.000Z">
+<meta property="article:modified_time" content="2023-04-16T12:12:25.466Z">
+<meta property="article:author" content="Goldie">
+<meta property="article:tag" content="VPS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qiniu.jsblog.fun//img/image-20230408173028739.png">
+
+<link rel="canonical" href="https://jsblog.fun/2023/04/08/V2ray+TLS+websocket+cdn%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>V2ray+tls+websocket+cdn代理服务器搭建 | 小金的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">小金的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://jsblog.fun/2023/04/08/V2ray+TLS+websocket+cdn%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatars.jpg">
+      <meta itemprop="name" content="Goldie">
+      <meta itemprop="description" content="极其稀有。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小金的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          V2ray+tls+websocket+cdn代理服务器搭建
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-08 18:14:00" itemprop="dateCreated datePublished" datetime="2023-04-08T18:14:00+08:00">2023-04-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-16 20:12:25" itemprop="dateModified" datetime="2023-04-16T20:12:25+08:00">2023-04-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Virtual-Machine/" itemprop="url" rel="index"><span itemprop="name">Virtual Machine</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>8 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近有了自己的云服务器（<a target="_blank" rel="noopener" href="https://azure.microsoft.com/zh-cn/">Azure微软云</a>，我的部署过程请看之前的博客），所以想着借助于代理隐藏自己的IP，又怕自己的服务器IP被墙了，所以尝试搭建一个安全系数比较高的代理服务器。</p>
+<p>我所采用的是V2ray+TLS+websocket+cdn加速的策略。cdn是为了在最严格的阶段，或者说自己的IP已经被墙了的阶段让它可用。日常不准备使用CDN加速。</p>
+<span id="more"></span>
+
+<h2 id="V2ray安装"><a href="#V2ray安装" class="headerlink" title="V2ray安装"></a>V2ray安装</h2><p>V2ray安装我使用的是<a target="_blank" rel="noopener" href="https://github.com/233boy/v2ray/tree/master">223boy的一键脚本</a>，我个人觉得非常好用。</p>
+<p>安装方式：（需要使用root用户哦）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ apt-get update -y &amp;&amp; apt-get install wget -y &amp;&amp; apt-get install curl -y <span class="comment">#安装一下必要的依赖</span></span><br><span class="line">$ bash &lt;(curl -s -L https://git.io/v2ray.sh) <span class="comment">#安装主程序</span></span><br></pre></td></tr></table></figure>
+
+<p>开始安装下来一路默认回车就可以，这样是最简单的代理服务器设置，默认之后会输出端口和其他信息，记住这个端口。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#打开防火墙，这是Linux系统防火墙，一般默认是除了必要端口全关闭的。</span></span><br><span class="line">$ iptables -I INPUT -p tcp --dport &lt;port&gt; -j ACCEPT</span><br></pre></td></tr></table></figure>
+
+<p>如果比较严格的虚拟机厂商，比如Azure，我们是需要在虚拟机控制台再打开对应端口的。需要两者配合。</p>
+<p>此时输入</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ v2ray url</span><br></pre></td></tr></table></figure>
+
+<p>复制出来的连接地址，导入到<a target="_blank" rel="noopener" href="https://github.com/2dust/v2rayN/releases?after=3.15.2"><code>V2rayN</code></a> (我在PC上使用，系统是Wndwos，这是一个很方便的节点管理软件)就可以直接使用代理服务了，比较简单方面。</p>
+<p>选择从剪贴板导入即可</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408173028739.png"></p>
+<p>将此服务器设置为活动服务器，然后路由选择绕过大陆，将系统代理改为自动配置代理就可以顺利代理啦！</p>
+<p>这样设置就和PAC模式一样，仅在需要的时候使用代理。如果想要使用全局，就将路由选为全局。</p>
+<h2 id="V2ray-tls-websocket-cdn"><a href="#V2ray-tls-websocket-cdn" class="headerlink" title="V2ray+tls+websocket+cdn"></a>V2ray+tls+websocket+cdn</h2><p>以上是基础的V2ray配置，能代理上网，安全性一般，如果不经常使用也够用了。</p>
+<p>我感觉自己用的比较多，我就升级了一下。下面就是V2ray+TLS+websocket+cdn的配置过程：</p>
+<p>官方有一个<a target="_blank" rel="noopener" href="https://selierlin.github.io/v2ray/">教程</a>，省去了较多步骤，如果很熟练的话可以跟这个教程来进行。</p>
+<p>我还看了一个<a target="_blank" rel="noopener" href="https://autkevin.github.io/2021/10/15/V2ray+ws+tls+cdn%E6%90%AD%E5%BB%BA%E6%9C%8D%E5%8A%A1%E5%99%A8/">较详细的教程</a>，根据这两个进行了自己的代理服务器搭建。</p>
+<h3 id="部署的环境"><a href="#部署的环境" class="headerlink" title="部署的环境"></a>部署的环境</h3><p>域名购买：<a target="_blank" rel="noopener" href="https://www.namecheap.com/">Namecheap</a></p>
+<p>CDN: <a target="_blank" rel="noopener" href="https://www.cloudflare-cn.com/?ref=dhs.zsyts.cn">Cloudflare</a></p>
+<p>web server：Nginx</p>
+<p>系统：Ubuntu</p>
+<h3 id="TLS的设置"><a href="#TLS的设置" class="headerlink" title="TLS的设置"></a>TLS的设置</h3><blockquote>
+<p>TLS 中文译名是传输层安全，以下是v2ray教程里给出的两个介绍的比较好的文章：</p>
+<p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html">SSL&#x2F;TLS协议运行机制的概述</a></p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%82%B3%E8%BC%B8%E5%B1%A4%E5%AE%89%E5%85%A8%E5%8D%94%E8%AD%B0">传输层安全协议</a></p>
+</blockquote>
+<p>首先我进行了一个V2ray+TLS的部署，TLS流量的设置需要有证书，而证书需要现有一个域名。</p>
+<h4 id="域名购买以及解析"><a href="#域名购买以及解析" class="headerlink" title="域名购买以及解析"></a>域名购买以及解析</h4><p>我是从Namecheap购买的域名，使用学生认证免费获得了一年的使用权。</p>
+<p>缺点就是只能使用.me的，只需要搜索域名然后绑定github就可以了。</p>
+<p>购买好域名后，我们将其绑定到Cloudflare中：</p>
+<p>注册账号后登录，在主页中添加站点：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408183048906.png" alt="image-20230408183048906"></p>
+<p>然后选择免费计划，个人用户一般就够用：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408183143011.png" alt="image-20230408183143011"></p>
+<p>然后配置DNS：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408183408836.png" alt="image-20230408183408836"></p>
+<p>上面的名称指的是<strong>域名名称</strong>。不开代理是为了设置证书。</p>
+<p>然后在Namecheap中更改dns服务器，这样配置后就成功了。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408183611426.png" alt="image-20230408183611426"></p>
+<p>等待几分钟后，配置就会成功。</p>
+<p>下面记录一下自己的API key，一会要用：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408184424095.png" alt="image-20230408184424095"></p>
+<p>选择Global API key，输入密码后可以查看，复制下来，一定要<strong>慎重保存！不要泄露!</strong></p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408184516869.png" alt="image-20230408184516869"></p>
+<p>申请配置好之后，还要再把SSL&#x2F;TLS加密模式设为完全模式，<strong>端到端加密，使用服务器上的自签名证书</strong>。</p>
+<p>这一步<strong>配置好后再来确认一次</strong>哦！</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408185518894.png" alt="image-20230408185518894"></p>
+<h4 id="注册TLS证书"><a href="#注册TLS证书" class="headerlink" title="注册TLS证书"></a>注册TLS证书</h4><blockquote>
+<p>这里是V2ray官方提供的教程介绍：</p>
+<p>TLS 是证书认证机制，所以使用 TLS 需要证书，证书也有免费付费的，同样的这里使用免费证书，证书认证机构为 <a target="_blank" rel="noopener" href="https://letsencrypt.org/">Let’s Encrypt</a>。 证书的生成有许多方法，这里使用的是比较简单的方法：使用 <a target="_blank" rel="noopener" href="https://github.com/Neilpang/acme.sh">acme.sh</a> 脚本生成，本部分说明部分内容参考于<a target="_blank" rel="noopener" href="https://github.com/Neilpang/acme.sh/blob/master/README.md">acme.sh README</a>。</p>
+<p>证书有两种，一种是 ECC 证书（内置公钥是 ECDSA 公钥），一种是 RSA 证书（内置 RSA 公钥）。简单来说，同等长度 ECC 比 RSA 更安全,也就是说在具有同样安全性的情况下，ECC 的密钥长度比 RSA 短得多（加密解密会更快）。但问题是 ECC 的兼容性会差一些，Android 4.x 以下和 Windows XP 不支持。只要您的设备不是非常老的老古董，强烈建议使用 ECC 证书。</p>
+</blockquote>
+<p>而证书的生成需要用到一个包:acme</p>
+<p>下面我们在服务器上进行操作和注册：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ curl  https://get.acme.sh | sh</span><br><span class="line"><span class="comment">#安装默认安装到 ~/.acme.sh目录下</span></span><br><span class="line">$ <span class="built_in">source</span> ~/.bashrc</span><br><span class="line"><span class="comment">#如果安装报错了，可能需要安装一下socat</span></span><br><span class="line">$ sudo apt-get -y install netcat</span><br></pre></td></tr></table></figure>
+
+<p>我下面是根据这两个说明来进行的</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/acmesh-official/acme.sh/wiki/ZeroSSL.com-CA">acme使用ZeroSSL的CA证书</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用邮箱注册zerossl账号</span></span><br><span class="line">$ acme.sh  --register-account  -m EMAIL@example.com --server zerossl</span><br><span class="line"><span class="comment"># 设置Cloudflare的API Key（上一步得到的）</span></span><br><span class="line">$ <span class="built_in">export</span> CF_Key=<span class="string">&quot;ccxxxxxxxxxxxxxxxxxxxb&quot;</span></span><br><span class="line"><span class="comment">#设置邮箱，填一个自己注册cloudflare的邮箱就可以了</span></span><br><span class="line">$ <span class="built_in">export</span> CF_Email=<span class="string">&quot;xxxx@sss.com&quot;</span></span><br><span class="line"><span class="comment">#生成证书，把YOURDOMAIN.COM替换为自己的域名</span></span><br><span class="line">$ acme.sh --server zerossl --issue  -d  YOURDOMAIN.COM --dns dns_cf</span><br><span class="line">$ sudo ~/.acme.sh/acme.sh --installcert -d MYDOMAIN --fullchainpath /etc/crt/autumn.crt --keypath /etc/crt/autumn.key</span><br><span class="line"><span class="comment">#有时候这一步会报错说不允许用sudo，你可以切换到root再进行修改，不过~要换成你登录用户的家目录，如/home/user/.acme.sh/acme.sh --installcert -d MYDOMAIN --fullchainpath /etc/crt/autumn.crt --keypath /etc/crt/autumn.key</span></span><br><span class="line"><span class="comment">#安装tls证书</span></span><br><span class="line">$ sudo ~/.acme.sh/acme.sh --installcert -d mydomain.me --fullchainpath /etc/v2ray/v2ray.crt --keypath /etc/v2ray/v2ray.key --ecc</span><br></pre></td></tr></table></figure>
+
+<p>附上手动更新证书的命令，acme每60天会自动更新证书</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#ecc证书</span></span><br><span class="line">$ sudo ~/.acme.sh/acme.sh --renew -d mydomain.com --force --ecc</span><br><span class="line"><span class="comment">#rsa证书</span></span><br><span class="line">$ sudo ~/.acme.sh/acme.sh --renew -d mydomain.com --force</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：无论什么情况，密钥(即上面的v2ray.key)都不能泄漏，如果你不幸泄漏了密钥，可以使用 acme.sh 将原证书吊销，再生成新的证书，吊销方法请自行参考 acme.sh 的手册</strong></p>
+<blockquote>
+<h4 id="V2ray-tls"><a href="#V2ray-tls" class="headerlink" title="V2ray+tls"></a><strong>V2ray+tls</strong></h4><p>到这一步就可以配置成V2ray+TLS的配置了，如果不想继续设置Nginx了，可以按如下配置设置。</p>
+<p>V2ray服务端配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/v2ray/config.json</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;inbound&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;port&quot;</span>: 443, // 建议使用 443 端口</span><br><span class="line">    <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;vmess&quot;</span>,    </span><br><span class="line">    <span class="string">&quot;settings&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;clients&quot;</span>: [</span><br><span class="line">        &#123;</span><br><span class="line">          <span class="string">&quot;id&quot;</span>: <span class="string">&quot;23ad6b10-8d1a-40f7-8ad0-e3e35cd38297&quot;</span>,   <span class="comment">#你自己设置的id，可以选默认或生成</span></span><br><span class="line">          <span class="string">&quot;alterId&quot;</span>: 64/0 <span class="comment">#我尝试了 用0也可以</span></span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;streamSettings&quot;</span>: &#123;</span><br><span class="line">      <span class="string">&quot;network&quot;</span>: <span class="string">&quot;tcp&quot;</span>,</span><br><span class="line">      <span class="string">&quot;security&quot;</span>: <span class="string">&quot;tls&quot;</span>, // security 要设置为 tls 才会启用 TLS</span><br><span class="line">      <span class="string">&quot;tlsSettings&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;certificates&quot;</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="string">&quot;certificateFile&quot;</span>: <span class="string">&quot;/etc/v2ray/v2ray.crt&quot;</span>, // 证书文件</span><br><span class="line">            <span class="string">&quot;keyFile&quot;</span>: <span class="string">&quot;/etc/v2ray/v2ray.key&quot;</span> // 密钥文件</span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;outbound&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;freedom&quot;</span>,</span><br><span class="line">    <span class="string">&quot;settings&quot;</span>: &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改好后重新启动V2ray</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ v2ray <span class="comment">#打开脚本</span></span><br><span class="line">$ 8</span><br><span class="line">$ 3</span><br></pre></td></tr></table></figure>
+
+<p>v2rayN客户端配置：</p>
+<p>添加Vmess服务器</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408192350701.png" alt="image-20230408192350701"></p>
+<p>然后填写各项：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE.png" alt="客户端配置"></p>
+<p>确定后测试一下tcp ping，能ping通后测试下真延迟，都有显示说明配置成功。</p>
+</blockquote>
+<h3 id="Websocket-Nginx配置"><a href="#Websocket-Nginx配置" class="headerlink" title="Websocket+Nginx配置"></a>Websocket+Nginx配置</h3><p>下面需要在我们的服务器中添加Nginx web server，即开始搭建真正的网站了。</p>
+<p>安装Nginx：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#更新一下先</span></span><br><span class="line">$ sudo apt update</span><br><span class="line">$ sudo apt-install nginx</span><br></pre></td></tr></table></figure>
+
+<p>安装好后，可以配置自己的nginx了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo vim /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">events&#123;&#125;</span><br><span class="line">http&#123;</span><br><span class="line">        error_log  /etc/nginx/nginx-error.log error;</span><br><span class="line">server &#123;</span><br><span class="line">  listen  443 ssl;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"> ssl on;    可写可不写，写上可能报错</span></span><br><span class="line">  ssl_certificate       /etc/v2ray/v2ray.crt;</span><br><span class="line">  ssl_certificate_key   /etc/v2ray/v2ray.key;</span><br><span class="line">  ssl_protocols         TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">  ssl_ciphers           HIGH:!aNULL:!MD5;</span><br><span class="line">  server_name           jinreaserach.me;</span><br><span class="line"></span><br><span class="line">  location /ray/ &#123; #你的代理地址，建议修改个复杂点的，“//”不能省 </span><br><span class="line">    proxy_pass http://127.0.0.1:10000; #你准备开放的端口</span><br><span class="line">    proxy_http_version 1.1;</span><br><span class="line">    proxy_set_header Upgrade $http_upgrade;</span><br><span class="line">    proxy_redirect off;</span><br><span class="line">    proxy_set_header Connection &quot;upgrade&quot;;</span><br><span class="line">    proxy_set_header Host $http_host;</span><br><span class="line">    proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动Nginx</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl start nginx</span><br><span class="line"></span><br><span class="line"><span class="comment">#其实我经常这样用Nginx</span></span><br><span class="line">$ sudo nginx -s stop <span class="comment">#关闭</span></span><br><span class="line">$ sudo nginx <span class="comment">#开启，默认使用/etc/nginx/nginx.conf</span></span><br></pre></td></tr></table></figure>
+
+<p>配置好后，去修改一下V2ray的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/v2ray/config.json</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">        <span class="string">&quot;log&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;access&quot;</span>: <span class="string">&quot;/var/log/v2ray/access.log&quot;</span>,</span><br><span class="line">                <span class="string">&quot;error&quot;</span>: <span class="string">&quot;/var/log/v2ray/error.log&quot;</span>,</span><br><span class="line">                <span class="string">&quot;loglevel&quot;</span>: <span class="string">&quot;warning&quot;</span></span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;inbounds&quot;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                        <span class="string">&quot;port&quot;</span>: 10000,  <span class="comment">#自己设置的开放端口，与Nginx中配置一致</span></span><br><span class="line">                        <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;vmess&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;settings&quot;</span>: &#123;</span><br><span class="line">                                <span class="string">&quot;clients&quot;</span>: [</span><br><span class="line">                                        &#123;</span><br><span class="line">                                                <span class="string">&quot;id&quot;</span>: <span class="string">&quot;190feb67-87c7-411f-8dec-1c33aa629e51&quot;</span>, <span class="comment">#修改和客户端一样</span></span><br><span class="line">                                                <span class="string">&quot;level&quot;</span>: 1,</span><br><span class="line">                                                <span class="string">&quot;alterId&quot;</span>: 0 <span class="comment">#也与客户端一致</span></span><br><span class="line">                                        &#125;</span><br><span class="line">                                ]</span><br><span class="line">                        &#125;,</span><br><span class="line">                        <span class="string">&quot;streamSettings&quot;</span>: &#123;</span><br><span class="line">                                <span class="string">&quot;network&quot;</span>: <span class="string">&quot;ws&quot;</span>,  <span class="comment">#修改成ws，意为websocket</span></span><br><span class="line">                                <span class="string">&quot;wsSettings&quot;</span>: &#123;</span><br><span class="line">                                        <span class="string">&quot;path&quot;</span>: <span class="string">&quot;/ray/&quot;</span> <span class="comment">#与Nginx配置文件中一致</span></span><br><span class="line">      &#125;</span><br><span class="line">                        &#125;,</span><br><span class="line">                        <span class="string">&quot;sniffing&quot;</span>: &#123;</span><br><span class="line">                                <span class="string">&quot;enabled&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">                                <span class="string">&quot;destOverride&quot;</span>: [</span><br><span class="line">                                        <span class="string">&quot;http&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;tls&quot;</span>  </span><br><span class="line">                                ]</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                //include_ss</span><br><span class="line">                //include_socks</span><br><span class="line">                //include_mtproto</span><br><span class="line">                //include_in_config</span><br><span class="line">                //</span><br><span class="line">        ],</span><br><span class="line">        <span class="string">&quot;outbounds&quot;</span>: [</span><br><span class="line">                &#123;</span><br><span class="line">                        <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;freedom&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;settings&quot;</span>: &#123;</span><br><span class="line">                                <span class="string">&quot;domainStrategy&quot;</span>: <span class="string">&quot;UseIP&quot;</span></span><br><span class="line">                        &#125;,</span><br><span class="line">                        <span class="string">&quot;tag&quot;</span>: <span class="string">&quot;direct&quot;</span></span><br><span class="line">                &#125;,</span><br><span class="line">                &#123;</span><br><span class="line">                        <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;blackhole&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;settings&quot;</span>: &#123;&#125;,</span><br><span class="line">                        <span class="string">&quot;tag&quot;</span>: <span class="string">&quot;blocked&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">                //include_out_config</span><br><span class="line">                //</span><br><span class="line">        ],</span><br><span class="line">        <span class="string">&quot;dns&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;servers&quot;</span>: [</span><br><span class="line">                        <span class="string">&quot;https+local://dns.google/dns-query&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;8.8.8.8&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;1.1.1.1&quot;</span>,</span><br><span class="line">                        <span class="string">&quot;localhost&quot;</span></span><br><span class="line">                ]</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;routing&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;domainStrategy&quot;</span>: <span class="string">&quot;IPOnDemand&quot;</span>,</span><br><span class="line">                <span class="string">&quot;rules&quot;</span>: [</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">                <span class="string">&quot;ip&quot;</span>: [</span><br><span class="line">                    <span class="string">&quot;geoip:private&quot;</span></span><br><span class="line">                ],</span><br><span class="line">                <span class="string">&quot;outboundTag&quot;</span>: <span class="string">&quot;blocked&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">                        ,</span><br><span class="line">                        &#123;</span><br><span class="line">                                <span class="string">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">                                <span class="string">&quot;domain&quot;</span>: [</span><br><span class="line">                                        <span class="string">&quot;domain:epochtimes.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:epochtimes.com.tw&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:epochtimes.fr&quot;</span>,</span><br><span class="line">                                       <span class="string">&quot;domain:epochtimes.de&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:epochtimes.jp&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:epochtimes.ru&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:epochtimes.co.il&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:epochtimes.co.kr&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:epochtimes-romania.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:erabaru.net&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:lagranepoca.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:theepochtimes.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:ntdtv.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:ntd.tv&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:ntdtv-dc.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:ntdtv.com.tw&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:minghui.org&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:renminbao.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:dafahao.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:dongtaiwang.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:falundafa.org&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:wujieliulan.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:ninecommentaries.com&quot;</span>,</span><br><span class="line">                                        <span class="string">&quot;domain:shenyun.com&quot;</span></span><br><span class="line">                                ],</span><br><span class="line">                                <span class="string">&quot;outboundTag&quot;</span>: <span class="string">&quot;blocked&quot;</span></span><br><span class="line">                        &#125;                       ,</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="string">&quot;type&quot;</span>: <span class="string">&quot;field&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;protocol&quot;</span>: [</span><br><span class="line">                        <span class="string">&quot;bittorrent&quot;</span></span><br><span class="line">                    ],</span><br><span class="line">                    <span class="string">&quot;outboundTag&quot;</span>: <span class="string">&quot;blocked&quot;</span></span><br><span class="line">                &#125;</span><br><span class="line">                        //include_ban_ad</span><br><span class="line">                        //include_rules</span><br><span class="line">                        //</span><br><span class="line">                ]</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;transport&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;kcpSettings&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;uplinkCapacity&quot;</span>: 100,</span><br><span class="line">            <span class="string">&quot;downlinkCapacity&quot;</span>: 100,</span><br><span class="line">            <span class="string">&quot;congestion&quot;</span>: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>修改好后重新启动v2ray</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ v2ray <span class="comment">#打开脚本</span></span><br><span class="line">$ 8</span><br><span class="line">$ 3</span><br></pre></td></tr></table></figure>
+
+<p>客户端配置如下：</p>
+<p>先添加Vmess服务器</p>
+<p>然后配置以下各项内容：（端口都是443）</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408195301274.png" alt="image-20230408195301274"></p>
+<p>都测试好后，测试一下Tcpping，能ping通后测试真连接延迟，能连接后即可。</p>
+<p>此情况下域名也是能正常访问的，会显示如下画面:</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408195412270.png" alt="image-20230408195412270"></p>
+<p>设置的路径应该也是能加载出来的，不过会显示什么都没有，或者bad request.</p>
+<p>到此为止，就全部配置成功了。</p>
+<p>如果不放心，可以到<a target="_blank" rel="noopener" href="https://www.ssllabs.com/ssltest/index.html">Qualys SSL Labs’s SSL Server Test</a>进行测试，测试结果应该可以到A（如果是<strong>V2ray+tls</strong>，应该会到B）：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408195953236.png" alt="image-20230408195953236"></p>
+<h3 id="CDN加速"><a href="#CDN加速" class="headerlink" title="CDN加速"></a>CDN加速</h3><p>V2ray+tls+websocket+nginx其实已经很安全了，但是如果这样子都被墙了，或者想加快访问速度（至少国内Cloudflare我测试是加速不了，如果域名备案了可以试试国内的），可以使用CDN加速，这里使用的是Cloudflare：</p>
+<p><img src="http://qiniu.jsblog.fun//img/Cloudflares.png" alt="Cloudflares"></p>
+<p>这下就可以防止IP被墙和加速访问（至少我是没有）啦！</p>
+
+    </div>
+
+    
+    
+    <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px; padding-top: 10px;">--------------------------------------- <i class="fa fa-heart"></i> The End <i class="fa fa-heart"></i> ---------------------------------------  </div>
+    
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/VPS/" <i class="fa fa-tag"></i> VPS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/08/Azure%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/" rel="prev" title="Azure微软云(Azure for students)虚拟机创建">
+      <i class="fa fa-chevron-left"></i> Azure微软云(Azure for students)虚拟机创建
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/09/windows%20server+TLS+websocket+nginx/" rel="next" title="Windows server+v2ray+tls+wb+nginx代理服务器搭建">
+      Windows server+v2ray+tls+wb+nginx代理服务器搭建 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="lv-container" data-id="city" data-uid="MTAyMC81ODM1Ni8zNDgxOQ=="></div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#V2ray%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">V2ray安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#V2ray-tls-websocket-cdn"><span class="nav-number">2.</span> <span class="nav-text">V2ray+tls+websocket+cdn</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E7%9A%84%E7%8E%AF%E5%A2%83"><span class="nav-number">2.1.</span> <span class="nav-text">部署的环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TLS%E7%9A%84%E8%AE%BE%E7%BD%AE"><span class="nav-number">2.2.</span> <span class="nav-text">TLS的设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E8%B4%AD%E4%B9%B0%E4%BB%A5%E5%8F%8A%E8%A7%A3%E6%9E%90"><span class="nav-number">2.2.1.</span> <span class="nav-text">域名购买以及解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E5%86%8CTLS%E8%AF%81%E4%B9%A6"><span class="nav-number">2.2.2.</span> <span class="nav-text">注册TLS证书</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2ray-tls"><span class="nav-number">2.2.3.</span> <span class="nav-text">V2ray+tls</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Websocket-Nginx%E9%85%8D%E7%BD%AE"><span class="nav-number">2.3.</span> <span class="nav-text">Websocket+Nginx配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CDN%E5%8A%A0%E9%80%9F"><span class="nav-number">2.4.</span> <span class="nav-text">CDN加速</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Goldie"
+      src="/images/avatars.jpg">
+  <p class="site-author-name" itemprop="name">Goldie</p>
+  <div class="site-description" itemprop="description">极其稀有。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+  
+  <script type="text/javascript" charset="utf-8" src="/js/tagcloud.js"></script>
+  <script type="text/javascript" charset="utf-8" src="/js/tagcanvas.js"></script>
+  <div class="widget-wrap">
+      <div id="myCanvasContainer" class="widget tagcloud">
+          <canvas width="220" height="250" id="resCanvas" style="width=100%">
+              <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ai%E7%BB%98%E5%9B%BE/" rel="tag">Ai绘图</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Claude/" rel="tag">Claude</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Github/" rel="tag">Github</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Next/" rel="tag">Next</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VPS/" rel="tag">VPS</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/markdown/" rel="tag">markdown</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/office-copilot/" rel="tag">office copilot</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%81%E4%B8%9A%E9%82%AE%E7%AE%B1/" rel="tag">企业邮箱</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E5%B0%8F%E7%AB%99/" rel="tag">博客小站</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%AE%A2%E7%BE%8E%E5%8C%96/" rel="tag">博客美化</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%BE%E5%BA%8A%E8%AE%BE%E7%BD%AE/" rel="tag">图床设置</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81/" rel="tag">学生认证</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A7%A3%E5%86%B3%E6%8A%A5%E9%94%99/" rel="tag">解决报错</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98/" rel="tag">阿里云盘</a><span class="tag-list-count">1</span></li></ul>
+          </canvas>
+      </div>
+  </div>
+  
+
+  </div>
+
+  </aside>
+
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Goldie</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">37k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">34 分钟</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+NexT.utils.loadComments(document.querySelector('#lv-container'), () => {
+  window.livereOptions = {
+    refer: location.pathname.replace(CONFIG.root, '').replace('index.html', '')
+  };
+  (function(d, s) {
+    var j, e = d.getElementsByTagName(s)[0];
+    if (typeof LivereTower === 'function') { return; }
+    j = d.createElement(s);
+    j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+    j.async = true;
+    e.parentNode.insertBefore(j, e);
+  })(document, 'script');
+});
+</script>
+
+</body>
+</html>

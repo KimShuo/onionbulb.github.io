@@ -182,13 +182,6 @@
 
   
   <url>
-    <loc>https://jsblog.fun/tags/VPS/</loc>
-    <lastmod>2023-04-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://jsblog.fun/tags/%E5%8D%9A%E5%AE%A2%E5%B0%8F%E7%AB%99/</loc>
     <lastmod>2023-04-20</lastmod>
     <changefreq>weekly</changefreq>
@@ -196,7 +189,7 @@
   </url>
   
   <url>
-    <loc>https://jsblog.fun/tags/%E5%9B%BE%E5%BA%8A%E8%AE%BE%E7%BD%AE/</loc>
+    <loc>https://jsblog.fun/tags/VPS/</loc>
     <lastmod>2023-04-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -204,6 +197,13 @@
   
   <url>
     <loc>https://jsblog.fun/tags/%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81/</loc>
+    <lastmod>2023-04-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://jsblog.fun/tags/%E5%9B%BE%E5%BA%8A%E8%AE%BE%E7%BD%AE/</loc>
     <lastmod>2023-04-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -259,21 +259,14 @@
   </url>
   
   <url>
-    <loc>https://jsblog.fun/tags/Github/</loc>
-    <lastmod>2023-04-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://jsblog.fun/tags/Ai%E7%BB%98%E5%9B%BE/</loc>
-    <lastmod>2023-04-20</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://jsblog.fun/tags/%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98/</loc>
+    <lastmod>2023-04-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://jsblog.fun/tags/Github/</loc>
     <lastmod>2023-04-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -286,14 +279,14 @@
     <priority>0.2</priority>
   </url>
   
-
-  
   <url>
-    <loc>https://jsblog.fun/categories/Virtual-Machine/</loc>
+    <loc>https://jsblog.fun/tags/Ai%E7%BB%98%E5%9B%BE/</loc>
     <lastmod>2023-04-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
+  
+
   
   <url>
     <loc>https://jsblog.fun/categories/Blog/</loc>
@@ -303,7 +296,7 @@
   </url>
   
   <url>
-    <loc>https://jsblog.fun/categories/markdown/</loc>
+    <loc>https://jsblog.fun/categories/Virtual-Machine/</loc>
     <lastmod>2023-04-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -311,6 +304,13 @@
   
   <url>
     <loc>https://jsblog.fun/categories/Daily/</loc>
+    <lastmod>2023-04-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://jsblog.fun/categories/markdown/</loc>
     <lastmod>2023-04-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

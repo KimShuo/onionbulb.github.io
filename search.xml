@@ -1,6 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>基于Github的个人博客网站使用https协议</title>
+    <url>/2023/04/14/Github%E5%8D%9A%E5%AE%A2-%E4%BD%BF%E7%94%A8https%E5%8D%8F%E8%AE%AE/</url>
+    <content><![CDATA[<p>在访问自己的网站时，网页经常提示http连接不安全。</p>
+<p>今天就通过设置，将http协议改为https，去除连接不安全。</p>
+ <span id="more"></span>
+
+<h2 id="第一步：Github开启enforce-https"><a href="#第一步：Github开启enforce-https" class="headerlink" title="第一步：Github开启enforce https"></a>第一步：Github开启enforce https</h2><p>从Github开启https非常简单</p>
+<p>找到自己的仓库：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173517899.png" alt="image-20230414173517899"></p>
+<p>进入仓库项目的Settings-&gt;Github pages：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173616449.png" alt="image-20230414173616449"></p>
+<p>往下滑滑滑</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173701977.png" alt="image-20230414173701977"></p>
+<p>我是直接开启就可以，看到有人说这个按钮是灰色的，如是灰色的解决方法：</p>
+<blockquote>
+<p>那么如果如果之前已经开启了自定义域名， <code>enforce HTTPS</code>  无法勾选且怎么办？</p>
+<p>按照官方提示，进行如下操作：</p>
+<ol>
+<li><p>把 Custom domain 中的值清空，并点击 <code>Save</code>  进行保存；</p>
+</li>
+<li><p>在 Custom domain 中的填入之前清空的值，我这里是 <code>likfe.com</code> ，填入后点击保存；</p>
+</li>
+<li><p>尝试在浏览器里主动访问 域名，地址要根据自己的情况，注意协议类型是 https，正确情况下是能正常访问的；</p>
+</li>
+<li><p>刷新项目设置页，如果  <code>enforce HTTPS</code>  可勾选，勾选即可；</p>
+</li>
+<li><p>如果  <code>enforce HTTPS</code>  不可勾选，并且提示  <code>Not yet available for your site because the certificate has not finished being issued”</code> ，说明证书尚未申请完成，等待一天即可。</p>
+<p>转载自<a href="https://cloud.tencent.com/developer/user/1078698">他叫自己MR.张</a></p>
+</li>
+</ol>
+</blockquote>
+<h3 id="出现http和https混合内容"><a href="#出现http和https混合内容" class="headerlink" title="出现http和https混合内容"></a>出现http和https混合内容</h3><p>这样设置完成后，我出现了</p>
+<p><code>xed Content: The page at &#39;&lt;URL&gt;&#39; was loaded over HTTPS, but requested an insecure element &#39;&lt;URL&gt;&#39;. ....</code></p>
+<p>这个错误原因是因为我们访问域名用的是https流量，但是引用图片资源却是用的http流量，这会导致图片无法查看。</p>
+<p>于是我们需要去给我们的静态资源配置https证书，由于我的图片是存在七牛云的图床中，所以我进入七牛云配置一下自己的图床。</p>
+<h2 id="第二步：配置https证书"><a href="#第二步：配置https证书" class="headerlink" title="第二步：配置https证书"></a>第二步：配置https证书</h2><p>进入<a href="https://portal.qiniu.com/certificate/ssl">七牛云证书管理</a>，去申请ssl证书</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174540614.png" alt="image-20230414174540614"></p>
+<p>DV单域名证书是免费的，所以我们购买这个证书：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174650420.png"></p>
+<p>核对信息并支付，一定要是0元哈。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174710391.png" alt="image-20230414174710391"></p>
+<p>下面我们对信息进行补全：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174806248.png" alt="image-20230414174806248"></p>
+<p>公司信息可以瞎填一下，毕竟我们是个人，只要填满了申请CA证书就可以了。</p>
+<p>补充好了之后，我们就可以配置DNS信息了：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414172535082.png" alt="image-20230414172535082"></p>
+<p>在自己的控制台，我是腾讯云，按照要求的解析配置：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175202848.png" alt="image-20230414175202848"></p>
+<p>解析好后，域名验证一下，验证好了后等待CA机构审核，审核好后就自动配置好证书了，也可以在域名管理中修改：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175509903.png" alt="image-20230414175509903"></p>
+<p>我们还可以在域名管理设置一下防盗链白名单，防止其他人盗走我们的图片：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175600770.png" alt="image-20230414175600770"></p>
+<p>好了，现在访问自己的网址，可以发现有一把小锁了：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230414175953704.png" alt="image-20230414175953704"></p>
+]]></content>
+      <categories>
+        <category>Blog</category>
+      </categories>
+      <tags>
+        <tag>博客小站</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Azure微软云(Azure for students)虚拟机创建</title>
     <url>/2023/04/08/Azure%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</url>
     <content><![CDATA[<p>使用Azure for students学生订阅创建虚拟机，避免踩坑。</p>
@@ -84,66 +147,63 @@
       </tags>
   </entry>
   <entry>
-    <title>基于Github的个人博客网站使用https协议</title>
-    <url>/2023/04/14/Github%E5%8D%9A%E5%AE%A2-%E4%BD%BF%E7%94%A8https%E5%8D%8F%E8%AE%AE/</url>
-    <content><![CDATA[<p>在访问自己的网站时，网页经常提示http连接不安全。</p>
-<p>今天就通过设置，将http协议改为https，去除连接不安全。</p>
- <span id="more"></span>
+    <title>Github学生认证记录</title>
+    <url>/2023/04/02/Github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81%E7%94%B3%E8%AF%B7%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>最近github copliot很火爆，因为它编程的帮助功能很好用。</p>
+<p>但是只能免费试用60天，而学生认证可以永久免费，我正好还是大学生，所以认证一下。</p>
+<p>除此之外呢，github的<a href="https://education.github.com/pack">学生包</a>有很多福利，点击链接查看。</p>
+<p>以下是个人申请的经历，总共申请了12次，成功。</p>
+<span id="more"></span>
 
-<h2 id="第一步：Github开启enforce-https"><a href="#第一步：Github开启enforce-https" class="headerlink" title="第一步：Github开启enforce https"></a>第一步：Github开启enforce https</h2><p>从Github开启https非常简单</p>
-<p>找到自己的仓库：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173517899.png" alt="image-20230414173517899"></p>
-<p>进入仓库项目的Settings-&gt;Github pages：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173616449.png" alt="image-20230414173616449"></p>
-<p>往下滑滑滑</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173701977.png" alt="image-20230414173701977"></p>
-<p>我是直接开启就可以，看到有人说这个按钮是灰色的，如是灰色的解决方法：</p>
-<blockquote>
-<p>那么如果如果之前已经开启了自定义域名， <code>enforce HTTPS</code>  无法勾选且怎么办？</p>
-<p>按照官方提示，进行如下操作：</p>
+<h2 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h2><blockquote>
+<p>转载自<a href="https://zhuanlan.zhihu.com/p/578964972">知乎用户Akari</a></p>
+<ul>
+<li>教育邮箱（即学校发放的<a href="https://link.zhihu.com/?target=http://edu.cn">http://edu.cn</a>后缀的邮箱）（非必须）**(我有，所以用了)**</li>
+<li>以下材料四选一</li>
+</ul>
 <ol>
-<li><p>把 Custom domain 中的值清空，并点击 <code>Save</code>  进行保存；</p>
-</li>
-<li><p>在 Custom domain 中的填入之前清空的值，我这里是 <code>likfe.com</code> ，填入后点击保存；</p>
-</li>
-<li><p>尝试在浏览器里主动访问 域名，地址要根据自己的情况，注意协议类型是 https，正确情况下是能正常访问的；</p>
-</li>
-<li><p>刷新项目设置页，如果  <code>enforce HTTPS</code>  可勾选，勾选即可；</p>
-</li>
-<li><p>如果  <code>enforce HTTPS</code>  不可勾选，并且提示  <code>Not yet available for your site because the certificate has not finished being issued”</code> ，说明证书尚未申请完成，等待一天即可。</p>
-<p>转载自<a href="https://cloud.tencent.com/developer/user/1078698">他叫自己MR.张</a></p>
-</li>
+<li>带有学校名称，学校公章（如有），个人信息及有效期的学生证 <strong>（申请过程中使用了）</strong></li>
+<li>带有学校名称，入学日期和学校公章的录取通知书（推荐） <strong>（未使用）</strong></li>
+<li>学信网的个人学籍报告或学校出具的在读证明（最好是学校信纸头的），最好是英文版的（推荐） <strong>（使用了，将中文报告用网页翻译成英文然后截的图）</strong></li>
+<li>学期课表等Github支持的其他认证材料（不推荐） <strong>（未使用）</strong></li>
 </ol>
 </blockquote>
-<h3 id="出现http和https混合内容"><a href="#出现http和https混合内容" class="headerlink" title="出现http和https混合内容"></a>出现http和https混合内容</h3><p>这样设置完成后，我出现了</p>
-<p><code>xed Content: The page at &#39;&lt;URL&gt;&#39; was loaded over HTTPS, but requested an insecure element &#39;&lt;URL&gt;&#39;. ....</code></p>
-<p>这个错误原因是因为我们访问域名用的是https流量，但是引用图片资源却是用的http流量，这会导致图片无法查看。</p>
-<p>于是我们需要去给我们的静态资源配置https证书，由于我的图片是存在七牛云的图床中，所以我进入七牛云配置一下自己的图床。</p>
-<h2 id="第二步：配置https证书"><a href="#第二步：配置https证书" class="headerlink" title="第二步：配置https证书"></a>第二步：配置https证书</h2><p>进入<a href="https://portal.qiniu.com/certificate/ssl">七牛云证书管理</a>，去申请ssl证书</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174540614.png" alt="image-20230414174540614"></p>
-<p>DV单域名证书是免费的，所以我们购买这个证书：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174650420.png"></p>
-<p>核对信息并支付，一定要是0元哈。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174710391.png" alt="image-20230414174710391"></p>
-<p>下面我们对信息进行补全：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174806248.png" alt="image-20230414174806248"></p>
-<p>公司信息可以瞎填一下，毕竟我们是个人，只要填满了申请CA证书就可以了。</p>
-<p>补充好了之后，我们就可以配置DNS信息了：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414172535082.png" alt="image-20230414172535082"></p>
-<p>在自己的控制台，我是腾讯云，按照要求的解析配置：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175202848.png" alt="image-20230414175202848"></p>
-<p>解析好后，域名验证一下，验证好了后等待CA机构审核，审核好后就自动配置好证书了，也可以在域名管理中修改：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175509903.png" alt="image-20230414175509903"></p>
-<p>我们还可以在域名管理设置一下防盗链白名单，防止其他人盗走我们的图片：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175600770.png" alt="image-20230414175600770"></p>
-<p>好了，现在访问自己的网址，可以发现有一把小锁了：</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230414175953704.png" alt="image-20230414175953704"></p>
+<h2 id="开始申请"><a href="#开始申请" class="headerlink" title="开始申请"></a>开始申请</h2><p><strong>注意！以下全程都不要开魔法，github要你的位置的时候就允许！</strong></p>
+<p>进入<a href="https://link.zhihu.com/?target=https://education.github.com/discount_requests/pack_application">Github benefits</a></p>
+<p>选择学生优惠</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230404140341214.png" alt="image-20230404140341214"></p>
+<p>最好使用学校的edu邮箱，通过几率会增大</p>
+<p><img src="http://qiniu.jsblog.fun//img/github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81.png" alt="github学生认证"></p>
+<blockquote>
+<p>可以按我的写，我写的是</p>
+<p>I want to learn coding and try to make contribution to the community. I want to do my best to improve myself and the community.</p>
+</blockquote>
+<p>然后根据申请上传材料，尽量把链接复制到手机上，用手机拍照，不然会因为没拍照而被拒。</p>
+<p>我用的申请材料：(这些材料中尽量出现学校名称和日期，这个也是被拒的理由之一)</p>
+<blockquote>
+<ol>
+<li>学信网学籍认证，翻译成了英文。</li>
+<li>学生证。</li>
+<li>成绩单</li>
+<li>学生卡</li>
+</ol>
+</blockquote>
+<p>这些是我在10几次的申请中的使用材料。</p>
+<p>最后一次的血泪教训：</p>
+<p>修改个人资料，一定要把 user profile填完整！</p>
+<p>包括Name、Bio一定要填上自己的真实姓名和学校。</p>
+<p>如果实在不行，我还把头像换成了自己的证件照…	</p>
+<p>我最最最最没想到的，我是因为这个username多次被拒绝，在设置里改成自己的名字之后就通过了。</p>
+<p><img src="http://qiniu.jsblog.fun//img/username.png" alt="username"></p>
+<p>经过修改这个名字，我的申请就迅速通过了。</p>
+<p><img src="http://qiniu.jsblog.fun//img/Approved.png" alt="Approved"></p>
+<p>下面开始享受自己的学生福利吧！</p>
 ]]></content>
       <categories>
-        <category>Blog</category>
+        <category>Daily</category>
       </categories>
       <tags>
-        <tag>博客小站</tag>
+        <tag>学生认证</tag>
       </tags>
   </entry>
   <entry>
@@ -239,66 +299,6 @@
       </categories>
       <tags>
         <tag>图床设置</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Github学生认证记录</title>
-    <url>/2023/04/02/Github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81%E7%94%B3%E8%AF%B7%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p>最近github copliot很火爆，因为它编程的帮助功能很好用。</p>
-<p>但是只能免费试用60天，而学生认证可以永久免费，我正好还是大学生，所以认证一下。</p>
-<p>除此之外呢，github的<a href="https://education.github.com/pack">学生包</a>有很多福利，点击链接查看。</p>
-<p>以下是个人申请的经历，总共申请了12次，成功。</p>
-<span id="more"></span>
-
-<h2 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h2><blockquote>
-<p>转载自<a href="https://zhuanlan.zhihu.com/p/578964972">知乎用户Akari</a></p>
-<ul>
-<li>教育邮箱（即学校发放的<a href="https://link.zhihu.com/?target=http://edu.cn">http://edu.cn</a>后缀的邮箱）（非必须）**(我有，所以用了)**</li>
-<li>以下材料四选一</li>
-</ul>
-<ol>
-<li>带有学校名称，学校公章（如有），个人信息及有效期的学生证 <strong>（申请过程中使用了）</strong></li>
-<li>带有学校名称，入学日期和学校公章的录取通知书（推荐） <strong>（未使用）</strong></li>
-<li>学信网的个人学籍报告或学校出具的在读证明（最好是学校信纸头的），最好是英文版的（推荐） <strong>（使用了，将中文报告用网页翻译成英文然后截的图）</strong></li>
-<li>学期课表等Github支持的其他认证材料（不推荐） <strong>（未使用）</strong></li>
-</ol>
-</blockquote>
-<h2 id="开始申请"><a href="#开始申请" class="headerlink" title="开始申请"></a>开始申请</h2><p><strong>注意！以下全程都不要开魔法，github要你的位置的时候就允许！</strong></p>
-<p>进入<a href="https://link.zhihu.com/?target=https://education.github.com/discount_requests/pack_application">Github benefits</a></p>
-<p>选择学生优惠</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230404140341214.png" alt="image-20230404140341214"></p>
-<p>最好使用学校的edu邮箱，通过几率会增大</p>
-<p><img src="http://qiniu.jsblog.fun//img/github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81.png" alt="github学生认证"></p>
-<blockquote>
-<p>可以按我的写，我写的是</p>
-<p>I want to learn coding and try to make contribution to the community. I want to do my best to improve myself and the community.</p>
-</blockquote>
-<p>然后根据申请上传材料，尽量把链接复制到手机上，用手机拍照，不然会因为没拍照而被拒。</p>
-<p>我用的申请材料：(这些材料中尽量出现学校名称和日期，这个也是被拒的理由之一)</p>
-<blockquote>
-<ol>
-<li>学信网学籍认证，翻译成了英文。</li>
-<li>学生证。</li>
-<li>成绩单</li>
-<li>学生卡</li>
-</ol>
-</blockquote>
-<p>这些是我在10几次的申请中的使用材料。</p>
-<p>最后一次的血泪教训：</p>
-<p>修改个人资料，一定要把 user profile填完整！</p>
-<p>包括Name、Bio一定要填上自己的真实姓名和学校。</p>
-<p>如果实在不行，我还把头像换成了自己的证件照…	</p>
-<p>我最最最最没想到的，我是因为这个username多次被拒绝，在设置里改成自己的名字之后就通过了。</p>
-<p><img src="http://qiniu.jsblog.fun//img/username.png" alt="username"></p>
-<p>经过修改这个名字，我的申请就迅速通过了。</p>
-<p><img src="http://qiniu.jsblog.fun//img/Approved.png" alt="Approved"></p>
-<p>下面开始享受自己的学生福利吧！</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>学生认证</tag>
       </tags>
   </entry>
   <entry>
@@ -435,40 +435,6 @@
       </tags>
   </entry>
   <entry>
-    <title>hexo发生error：spawn failed错误的解决方法</title>
-    <url>/2023/03/27/hexo%E5%8F%91%E7%94%9Ferror%EF%BC%9Aspawn%20failed%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>spawn failed错误的解决方法</p>
-<span id="more"></span>
-
-<p>问题描述：<br>先是出现错误：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">error：spawn failed...</span><br></pre></td></tr></table></figure>
-
-<p>然后经过一些博客的操作会出现以下问题：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fatal: cannot lock ref &#x27;HEAD&#x27;: unable to resolve reference HEAD: Invalid argument error: src refspec</span><br></pre></td></tr></table></figure>
-
-<p>或者：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">error: src refspec HEAD does not match any.等等</span><br></pre></td></tr></table></figure>
-
-<p>总结一下：</p>
-<p>问题大多是因为git 进行push或者hexo d的时候改变了一些.deploy_git文件下的内容。</p>
-<p>解决办法：</p>
-<ol>
-<li>删除.deploy_git文件夹;</li>
-<li>输入git config –global core.autocrlf false</li>
-<li>然后，依次执行：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p>问题解决。暴力直接，有效。<br>————————————————<br>本文转载于<a href="https://blog.csdn.net/HTL2018">HuangTLhit</a>的文章，原文链接：<a href="https://blog.csdn.net/HTL2018/article/details/106876940">https://blog.csdn.net/HTL2018/article/details/106876940</a></p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>解决报错</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Windows server+v2ray+tls+wb+nginx代理服务器搭建</title>
     <url>/2023/04/09/windows%20server+TLS+websocket+nginx/</url>
     <content><![CDATA[<p>使用windows server 2012 完成v2ray+tls+wb+nginx的搭建</p>
@@ -559,6 +525,40 @@
       </categories>
       <tags>
         <tag>VPS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo发生error：spawn failed错误的解决方法</title>
+    <url>/2023/03/27/hexo%E5%8F%91%E7%94%9Ferror%EF%BC%9Aspawn%20failed%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>spawn failed错误的解决方法</p>
+<span id="more"></span>
+
+<p>问题描述：<br>先是出现错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">error：spawn failed...</span><br></pre></td></tr></table></figure>
+
+<p>然后经过一些博客的操作会出现以下问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fatal: cannot lock ref &#x27;HEAD&#x27;: unable to resolve reference HEAD: Invalid argument error: src refspec</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">error: src refspec HEAD does not match any.等等</span><br></pre></td></tr></table></figure>
+
+<p>总结一下：</p>
+<p>问题大多是因为git 进行push或者hexo d的时候改变了一些.deploy_git文件下的内容。</p>
+<p>解决办法：</p>
+<ol>
+<li>删除.deploy_git文件夹;</li>
+<li>输入git config –global core.autocrlf false</li>
+<li>然后，依次执行：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>问题解决。暴力直接，有效。<br>————————————————<br>本文转载于<a href="https://blog.csdn.net/HTL2018">HuangTLhit</a>的文章，原文链接：<a href="https://blog.csdn.net/HTL2018/article/details/106876940">https://blog.csdn.net/HTL2018/article/details/106876940</a></p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>解决报错</tag>
       </tags>
   </entry>
   <entry>
@@ -884,10 +884,24 @@
 <figure class="highlight css"><table><tr><td class="code"><pre><span class="line">//侧边栏颜色</span><br><span class="line"><span class="selector-class">.site-brand-container</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="number">#87CEFA</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>长这个样子：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230420202624106.png" alt="image-20230420202624106"></p>
 <h3 id="修改文章之间的分割线"><a href="#修改文章之间的分割线" class="headerlink" title="修改文章之间的分割线"></a>修改文章之间的分割线</h3><p>仅仅针对<strong>Pices</strong>主题</p>
 <p><code>\themes\next\source\css\_common\components\post\post-eof.styl</code></p>
 <figure class="highlight stylus"><table><tr><td class="code"><pre><span class="line"><span class="selector-class">.post-eof</span> &#123;</span><br><span class="line">  <span class="attribute">background</span>: <span class="variable">$grey</span>-light;</span><br><span class="line">  <span class="attribute">height</span>: <span class="number">1px</span>;</span><br><span class="line">  <span class="attribute">margin</span>: <span class="variable">$post</span>-eof-margin-top auto <span class="variable">$post</span>-eof-margin-bottom;</span><br><span class="line">  <span class="attribute">text-align</span>: center;</span><br><span class="line">  <span class="attribute">width</span>: <span class="number">8%</span>;</span><br><span class="line"></span><br><span class="line">  <span class="selector-class">.post-block</span><span class="selector-pseudo">:last-of-type</span> &amp; &#123;</span><br><span class="line">    <span class="attribute">display</span>: none;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h3 id="更改中英文字体"><a href="#更改中英文字体" class="headerlink" title="更改中英文字体"></a>更改中英文字体</h3><p>转自<a href="https://hexo-next.readthedocs.io/zh_CN/latest/next/advanced/%E5%AD%97%E4%BD%93%E8%AE%BE%E7%BD%AE/">字体设置</a></p>
+<p>更改英文字体为<code>Times New Roman</code>，进入<code>theme\next\_config.yml</code></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Font options:</span></span><br><span class="line"><span class="comment"># `external: true` will load this font family from `host` above.</span></span><br><span class="line"><span class="comment"># `family: Times New Roman`. Without any quotes.</span></span><br><span class="line"><span class="comment"># `size: x.x`. Use `em` as unit. Default: 1 (16px)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Global font settings used for all elements inside &lt;body&gt;.</span></span><br><span class="line"><span class="attr">global:</span></span><br><span class="line">  <span class="attr">external:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">family:</span> <span class="string">Times</span> <span class="string">New</span> <span class="string">Roman</span></span><br><span class="line">  <span class="attr">size:</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>更改中文为思源宋体（<code>Noto Serif SC</code>）</p>
+<p>修改<code>/source/css/_variables/base.styl</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// Font families.</span><br><span class="line">// $font-family-chinese      = &quot;PingFang SC&quot;, &quot;Microsoft YaHei&quot;;</span><br><span class="line">$font-family-chinese      = &quot;Noto Serif SC&quot;</span><br></pre></td></tr></table></figure>
+
+<p>修改<code>/layout/partials/head/head.njk</code>，在<code>next_font</code>添加</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;&#123; next_font() &#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;&#123;&#123; theme.vendors.fontawesome &#125;&#125;&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">### 添加</span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;https://fonts.googleapis.com/css?family=Noto+Serif+SC|Roboto&amp;display=swap&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>设置完后的效果：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230420211940266.png" alt="image-20230420211940266"></p>
 <h3 id="彩带子"><a href="#彩带子" class="headerlink" title="彩带子"></a>彩带子</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> themes/next</span><br><span class="line">$ <span class="built_in">ls</span></span><br><span class="line">_config.yml  crowdin.yml  docs  gulpfile.js  languages  layout  LICENSE.md  package.json  README.md  scripts  <span class="built_in">source</span></span><br></pre></td></tr></table></figure>
 
 <p>然后</p>
@@ -939,6 +953,56 @@
       </tags>
   </entry>
   <entry>
+    <title>实现阿里云盘实时同步本地文件</title>
+    <url>/2023/04/14/%E5%AE%9E%E7%8E%B0%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98%E5%90%8C%E6%AD%A5%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>一个<strong>阿里云盘同步备份文件的免费好方法</strong></p>
+<span id="more"></span>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在找本地文件的实时同步工具，想通过实时同步我的博客内容来保证博客内容实时有备份.</p>
+<p>然而试过了坚果云（纯纯流氓软件）、百度网盘、夸克网盘、OneDrive来同步本地本地文件，都觉得不是很好用</p>
+<ol>
+<li>坚果云：坚果云真的太流氓了，注册表和右键菜单永远卸载不干净，同步速度又慢，最后折腾了半天使用<a href="https://geekuninstaller.com/">GEEK</a>来卸载干净。</li>
+<li>百度网盘：上传速度慢，会员贵，我贫穷。</li>
+<li>夸克网盘：又限速，空间又小，不开会员非常难用，并且文件还容易丢。</li>
+<li>OneDrive：在国内限速！几乎不怎么动！本来很好用的，可惜是在国内。<a href="https://www.microsoft.com/zh-cn/microsoft-365/compare-china-global-versions-microsoft-365">世纪互联</a>的国内OneDrive据说很快，但是要付费。</li>
+<li>阿里云盘：主打不限速，但是同步备份功能要超级会员。我正好用学生认证拿到了1T空间，想着能不能用这个做点同步功能。</li>
+</ol>
+<h2 id="同步备份功能的实现"><a href="#同步备份功能的实现" class="headerlink" title="同步备份功能的实现"></a>同步备份功能的实现</h2><p>在Github发现一个非常好用的<a href="https://github.com/tickstep/aliyunpan">阿里云盘工具</a></p>
+<p><a href="https://github.com/tickstep/aliyunpan/releases">在这里</a>下载windows X64的版本，然后解压即可使用，无需安装。</p>
+<h3 id="开始使用aliyunpan"><a href="#开始使用aliyunpan" class="headerlink" title="开始使用aliyunpan"></a>开始使用aliyunpan</h3><p>双击解压之后的客户端：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414152706559.png" alt="image-20230414152706559"></p>
+<p>进入命令行界面：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414152933005.png" alt="image-20230414152933005"></p>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>进行登录需要用到refresh token</p>
+<p>需要进入到<a href="https://www.aliyundrive.com/drive/">网盘网页版</a>获取：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414154340275.png" alt="image-20230414154340275"></p>
+<p>复制token之后，在aliyunpan客户端中输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#登录</span></span><br><span class="line">aliyunpan&gt;/ login</span><br><span class="line"><span class="comment">#输入refresh token后即登录成功</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看一下有什么文件和工作目录</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">ls</span></span><br><span class="line"></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">pwd</span></span><br><span class="line"><span class="comment">#和网盘里的一样即可</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#列出当前账号</span></span><br><span class="line">aliyunpan&gt;/ unknown$ loglist</span><br><span class="line"><span class="comment">#获取当前账号</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">who</span></span><br></pre></td></tr></table></figure>
+
+<p>查验后确认是自己的账户之后先设置自动更新token：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aliyunpan&gt;/ unknown$ token update</span><br></pre></td></tr></table></figure>
+
+<h3 id="同步备份"><a href="#同步备份" class="headerlink" title="同步备份"></a>同步备份</h3><p>这些都设置完成后，启动官方的sync同步备份功能：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用命令行配置启动同步备份服务，将本地目录 D:\tickstep\Documents\设计文档 中的文件备份上传到云盘目录 /sync_drive/我的文档</span></span><br><span class="line"><span class="comment">#文件夹内容少时可直接上传</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span></span><br><span class="line"><span class="comment">#文件夹内容多则可以先扫描再上传</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span> -step scan</span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>等待命令运行后就可以发现云盘中确实是完成了自动备份</p>
+<p>自动备份功能需要一直运行云盘工具</p>
+<p>所以感觉运行在Linux服务器中就比较完美了。</p>
+<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>突然一想，我的博客是依靠于Github建立。</p>
+<p>我每次<code>hexo -d</code>将博客推送到我的Github账户上后，Github里我的项目就直接有一份备份了！</p>
+<p>我既然用的是windows个人系统，不能长时间开着我的电脑。</p>
+<p>而且Github中也一直有备份，那我一直想自动同步到阿里云盘，这有啥意义呢？</p>
+<p>不管如何，这肯定是一个<strong>同步备份文件的免费好方法</strong>了，就这样吧！</p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>阿里云盘</tag>
+        <tag>Github</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>快速访问github</title>
     <url>/2023/04/15/%E6%97%A0%E9%AD%94%E6%B3%95%E5%BF%AB%E9%80%9F%E8%AE%BF%E9%97%AEgithub/</url>
     <content><![CDATA[<p>使用Github开源项目加快访问Github</p>
@@ -969,6 +1033,28 @@
       </categories>
       <tags>
         <tag>Github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>(win11)将新建markdown文件添加到鼠标菜单栏</title>
+    <url>/2023/03/21/%E5%B0%86%E6%96%B0%E5%BB%BAmarkdown%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0%E9%BC%A0%E6%A0%87%E8%8F%9C%E5%8D%95%E6%A0%8F/</url>
+    <content><![CDATA[<p>实现右键新建菜单栏有markdown文件</p>
+<span id="more"></span>
+
+<h2 id="方法一-注册表修改法"><a href="#方法一-注册表修改法" class="headerlink" title="方法一 注册表修改法"></a>方法一 注册表修改法</h2><p><a href="https://zhuanlan.zhihu.com/p/152310631">https://zhuanlan.zhihu.com/p/152310631</a></p>
+<p>经测试我不可以用</p>
+<h2 id="方法二-新建文本文档改后缀"><a href="#方法二-新建文本文档改后缀" class="headerlink" title="方法二 新建文本文档改后缀"></a>方法二 新建文本文档改后缀</h2><p>新建以下文本文档，将txt改为reg</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line">[HKEY_CLASSES_ROOT\.md]</span><br><span class="line">@=&quot;MarkdownFile&quot;</span><br><span class="line">&quot;PerceivedType&quot;=&quot;text&quot;</span><br><span class="line">&quot;Content Type&quot;=&quot;text/plain&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\.md\ShellNew]</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile]</span><br><span class="line">@=&quot;Markdown文档&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\DefaultIcon]</span><br><span class="line">@=&quot;%SystemRoot%\system32\imageres.dll,-102&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\shell]</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\shell\open]</span><br></pre></td></tr></table></figure>
+
+<p>运行后，不可用，依然没有新建markdown选项</p>
+<h2 id="方法三-这次搜索关键词为win11-右键新建markdown文件"><a href="#方法三-这次搜索关键词为win11-右键新建markdown文件" class="headerlink" title="方法三 这次搜索关键词为win11 右键新建markdown文件"></a>方法三 这次搜索关键词为win11 右键新建markdown文件</h2><p>经测试可行：<a href="https://blog.csdn.net/qq_53055033/article/details/127442997">https://blog.csdn.net/qq_53055033/article/details/127442997</a></p>
+<p>注意我是重启之后就可行了。</p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>markdown</tag>
       </tags>
   </entry>
   <entry>
@@ -1025,78 +1111,6 @@
       </categories>
       <tags>
         <tag>Ai绘图</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>实现阿里云盘实时同步本地文件</title>
-    <url>/2023/04/14/%E5%AE%9E%E7%8E%B0%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98%E5%90%8C%E6%AD%A5%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>一个<strong>阿里云盘同步备份文件的免费好方法</strong></p>
-<span id="more"></span>
-
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在找本地文件的实时同步工具，想通过实时同步我的博客内容来保证博客内容实时有备份.</p>
-<p>然而试过了坚果云（纯纯流氓软件）、百度网盘、夸克网盘、OneDrive来同步本地本地文件，都觉得不是很好用</p>
-<ol>
-<li>坚果云：坚果云真的太流氓了，注册表和右键菜单永远卸载不干净，同步速度又慢，最后折腾了半天使用<a href="https://geekuninstaller.com/">GEEK</a>来卸载干净。</li>
-<li>百度网盘：上传速度慢，会员贵，我贫穷。</li>
-<li>夸克网盘：又限速，空间又小，不开会员非常难用，并且文件还容易丢。</li>
-<li>OneDrive：在国内限速！几乎不怎么动！本来很好用的，可惜是在国内。<a href="https://www.microsoft.com/zh-cn/microsoft-365/compare-china-global-versions-microsoft-365">世纪互联</a>的国内OneDrive据说很快，但是要付费。</li>
-<li>阿里云盘：主打不限速，但是同步备份功能要超级会员。我正好用学生认证拿到了1T空间，想着能不能用这个做点同步功能。</li>
-</ol>
-<h2 id="同步备份功能的实现"><a href="#同步备份功能的实现" class="headerlink" title="同步备份功能的实现"></a>同步备份功能的实现</h2><p>在Github发现一个非常好用的<a href="https://github.com/tickstep/aliyunpan">阿里云盘工具</a></p>
-<p><a href="https://github.com/tickstep/aliyunpan/releases">在这里</a>下载windows X64的版本，然后解压即可使用，无需安装。</p>
-<h3 id="开始使用aliyunpan"><a href="#开始使用aliyunpan" class="headerlink" title="开始使用aliyunpan"></a>开始使用aliyunpan</h3><p>双击解压之后的客户端：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414152706559.png" alt="image-20230414152706559"></p>
-<p>进入命令行界面：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414152933005.png" alt="image-20230414152933005"></p>
-<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>进行登录需要用到refresh token</p>
-<p>需要进入到<a href="https://www.aliyundrive.com/drive/">网盘网页版</a>获取：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414154340275.png" alt="image-20230414154340275"></p>
-<p>复制token之后，在aliyunpan客户端中输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#登录</span></span><br><span class="line">aliyunpan&gt;/ login</span><br><span class="line"><span class="comment">#输入refresh token后即登录成功</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看一下有什么文件和工作目录</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">ls</span></span><br><span class="line"></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">pwd</span></span><br><span class="line"><span class="comment">#和网盘里的一样即可</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#列出当前账号</span></span><br><span class="line">aliyunpan&gt;/ unknown$ loglist</span><br><span class="line"><span class="comment">#获取当前账号</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">who</span></span><br></pre></td></tr></table></figure>
-
-<p>查验后确认是自己的账户之后先设置自动更新token：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aliyunpan&gt;/ unknown$ token update</span><br></pre></td></tr></table></figure>
-
-<h3 id="同步备份"><a href="#同步备份" class="headerlink" title="同步备份"></a>同步备份</h3><p>这些都设置完成后，启动官方的sync同步备份功能：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用命令行配置启动同步备份服务，将本地目录 D:\tickstep\Documents\设计文档 中的文件备份上传到云盘目录 /sync_drive/我的文档</span></span><br><span class="line"><span class="comment">#文件夹内容少时可直接上传</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span></span><br><span class="line"><span class="comment">#文件夹内容多则可以先扫描再上传</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span> -step scan</span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>等待命令运行后就可以发现云盘中确实是完成了自动备份</p>
-<p>自动备份功能需要一直运行云盘工具</p>
-<p>所以感觉运行在Linux服务器中就比较完美了。</p>
-<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>突然一想，我的博客是依靠于Github建立。</p>
-<p>我每次<code>hexo -d</code>将博客推送到我的Github账户上后，Github里我的项目就直接有一份备份了！</p>
-<p>我既然用的是windows个人系统，不能长时间开着我的电脑。</p>
-<p>而且Github中也一直有备份，那我一直想自动同步到阿里云盘，这有啥意义呢？</p>
-<p>不管如何，这肯定是一个<strong>同步备份文件的免费好方法</strong>了，就这样吧！</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>阿里云盘</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>(win11)将新建markdown文件添加到鼠标菜单栏</title>
-    <url>/2023/03/21/%E5%B0%86%E6%96%B0%E5%BB%BAmarkdown%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0%E9%BC%A0%E6%A0%87%E8%8F%9C%E5%8D%95%E6%A0%8F/</url>
-    <content><![CDATA[<p>实现右键新建菜单栏有markdown文件</p>
-<span id="more"></span>
-
-<h2 id="方法一-注册表修改法"><a href="#方法一-注册表修改法" class="headerlink" title="方法一 注册表修改法"></a>方法一 注册表修改法</h2><p><a href="https://zhuanlan.zhihu.com/p/152310631">https://zhuanlan.zhihu.com/p/152310631</a></p>
-<p>经测试我不可以用</p>
-<h2 id="方法二-新建文本文档改后缀"><a href="#方法二-新建文本文档改后缀" class="headerlink" title="方法二 新建文本文档改后缀"></a>方法二 新建文本文档改后缀</h2><p>新建以下文本文档，将txt改为reg</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line">[HKEY_CLASSES_ROOT\.md]</span><br><span class="line">@=&quot;MarkdownFile&quot;</span><br><span class="line">&quot;PerceivedType&quot;=&quot;text&quot;</span><br><span class="line">&quot;Content Type&quot;=&quot;text/plain&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\.md\ShellNew]</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile]</span><br><span class="line">@=&quot;Markdown文档&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\DefaultIcon]</span><br><span class="line">@=&quot;%SystemRoot%\system32\imageres.dll,-102&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\shell]</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\shell\open]</span><br></pre></td></tr></table></figure>
-
-<p>运行后，不可用，依然没有新建markdown选项</p>
-<h2 id="方法三-这次搜索关键词为win11-右键新建markdown文件"><a href="#方法三-这次搜索关键词为win11-右键新建markdown文件" class="headerlink" title="方法三 这次搜索关键词为win11 右键新建markdown文件"></a>方法三 这次搜索关键词为win11 右键新建markdown文件</h2><p>经测试可行：<a href="https://blog.csdn.net/qq_53055033/article/details/127442997">https://blog.csdn.net/qq_53055033/article/details/127442997</a></p>
-<p>注意我是重启之后就可行了。</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>markdown</tag>
       </tags>
   </entry>
 </search>

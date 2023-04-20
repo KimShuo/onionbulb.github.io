@@ -1,69 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>基于Github的个人博客网站使用https协议</title>
-    <url>/2023/04/14/Github%E5%8D%9A%E5%AE%A2-%E4%BD%BF%E7%94%A8https%E5%8D%8F%E8%AE%AE/</url>
-    <content><![CDATA[<p>在访问自己的网站时，网页经常提示http连接不安全。</p>
-<p>今天就通过设置，将http协议改为https，去除连接不安全。</p>
- <span id="more"></span>
-
-<h2 id="第一步：Github开启enforce-https"><a href="#第一步：Github开启enforce-https" class="headerlink" title="第一步：Github开启enforce https"></a>第一步：Github开启enforce https</h2><p>从Github开启https非常简单</p>
-<p>找到自己的仓库：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173517899.png" alt="image-20230414173517899"></p>
-<p>进入仓库项目的Settings-&gt;Github pages：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173616449.png" alt="image-20230414173616449"></p>
-<p>往下滑滑滑</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173701977.png" alt="image-20230414173701977"></p>
-<p>我是直接开启就可以，看到有人说这个按钮是灰色的，如是灰色的解决方法：</p>
-<blockquote>
-<p>那么如果如果之前已经开启了自定义域名， <code>enforce HTTPS</code>  无法勾选且怎么办？</p>
-<p>按照官方提示，进行如下操作：</p>
-<ol>
-<li><p>把 Custom domain 中的值清空，并点击 <code>Save</code>  进行保存；</p>
-</li>
-<li><p>在 Custom domain 中的填入之前清空的值，我这里是 <code>likfe.com</code> ，填入后点击保存；</p>
-</li>
-<li><p>尝试在浏览器里主动访问 域名，地址要根据自己的情况，注意协议类型是 https，正确情况下是能正常访问的；</p>
-</li>
-<li><p>刷新项目设置页，如果  <code>enforce HTTPS</code>  可勾选，勾选即可；</p>
-</li>
-<li><p>如果  <code>enforce HTTPS</code>  不可勾选，并且提示  <code>Not yet available for your site because the certificate has not finished being issued”</code> ，说明证书尚未申请完成，等待一天即可。</p>
-<p>转载自<a href="https://cloud.tencent.com/developer/user/1078698">他叫自己MR.张</a></p>
-</li>
-</ol>
-</blockquote>
-<h3 id="出现http和https混合内容"><a href="#出现http和https混合内容" class="headerlink" title="出现http和https混合内容"></a>出现http和https混合内容</h3><p>这样设置完成后，我出现了</p>
-<p><code>xed Content: The page at &#39;&lt;URL&gt;&#39; was loaded over HTTPS, but requested an insecure element &#39;&lt;URL&gt;&#39;. ....</code></p>
-<p>这个错误原因是因为我们访问域名用的是https流量，但是引用图片资源却是用的http流量，这会导致图片无法查看。</p>
-<p>于是我们需要去给我们的静态资源配置https证书，由于我的图片是存在七牛云的图床中，所以我进入七牛云配置一下自己的图床。</p>
-<h2 id="第二步：配置https证书"><a href="#第二步：配置https证书" class="headerlink" title="第二步：配置https证书"></a>第二步：配置https证书</h2><p>进入<a href="https://portal.qiniu.com/certificate/ssl">七牛云证书管理</a>，去申请ssl证书</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174540614.png" alt="image-20230414174540614"></p>
-<p>DV单域名证书是免费的，所以我们购买这个证书：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174650420.png"></p>
-<p>核对信息并支付，一定要是0元哈。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174710391.png" alt="image-20230414174710391"></p>
-<p>下面我们对信息进行补全：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174806248.png" alt="image-20230414174806248"></p>
-<p>公司信息可以瞎填一下，毕竟我们是个人，只要填满了申请CA证书就可以了。</p>
-<p>补充好了之后，我们就可以配置DNS信息了：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414172535082.png" alt="image-20230414172535082"></p>
-<p>在自己的控制台，我是腾讯云，按照要求的解析配置：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175202848.png" alt="image-20230414175202848"></p>
-<p>解析好后，域名验证一下，验证好了后等待CA机构审核，审核好后就自动配置好证书了，也可以在域名管理中修改：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175509903.png" alt="image-20230414175509903"></p>
-<p>我们还可以在域名管理设置一下防盗链白名单，防止其他人盗走我们的图片：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175600770.png" alt="image-20230414175600770"></p>
-<p>好了，现在访问自己的网址，可以发现有一把小锁了：</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230414175953704.png" alt="image-20230414175953704"></p>
-]]></content>
-      <categories>
-        <category>Blog</category>
-      </categories>
-      <tags>
-        <tag>博客小站</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Azure微软云(Azure for students)虚拟机创建</title>
     <url>/2023/04/08/Azure%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</url>
     <content><![CDATA[<p>使用Azure for students学生订阅创建虚拟机，避免踩坑。</p>
@@ -144,161 +81,6 @@
       </categories>
       <tags>
         <tag>VPS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Github学生认证记录</title>
-    <url>/2023/04/02/Github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81%E7%94%B3%E8%AF%B7%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<p>最近github copliot很火爆，因为它编程的帮助功能很好用。</p>
-<p>但是只能免费试用60天，而学生认证可以永久免费，我正好还是大学生，所以认证一下。</p>
-<p>除此之外呢，github的<a href="https://education.github.com/pack">学生包</a>有很多福利，点击链接查看。</p>
-<p>以下是个人申请的经历，总共申请了12次，成功。</p>
-<span id="more"></span>
-
-<h2 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h2><blockquote>
-<p>转载自<a href="https://zhuanlan.zhihu.com/p/578964972">知乎用户Akari</a></p>
-<ul>
-<li>教育邮箱（即学校发放的<a href="https://link.zhihu.com/?target=http://edu.cn">http://edu.cn</a>后缀的邮箱）（非必须）**(我有，所以用了)**</li>
-<li>以下材料四选一</li>
-</ul>
-<ol>
-<li>带有学校名称，学校公章（如有），个人信息及有效期的学生证 <strong>（申请过程中使用了）</strong></li>
-<li>带有学校名称，入学日期和学校公章的录取通知书（推荐） <strong>（未使用）</strong></li>
-<li>学信网的个人学籍报告或学校出具的在读证明（最好是学校信纸头的），最好是英文版的（推荐） <strong>（使用了，将中文报告用网页翻译成英文然后截的图）</strong></li>
-<li>学期课表等Github支持的其他认证材料（不推荐） <strong>（未使用）</strong></li>
-</ol>
-</blockquote>
-<h2 id="开始申请"><a href="#开始申请" class="headerlink" title="开始申请"></a>开始申请</h2><p><strong>注意！以下全程都不要开魔法，github要你的位置的时候就允许！</strong></p>
-<p>进入<a href="https://link.zhihu.com/?target=https://education.github.com/discount_requests/pack_application">Github benefits</a></p>
-<p>选择学生优惠</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230404140341214.png" alt="image-20230404140341214"></p>
-<p>最好使用学校的edu邮箱，通过几率会增大</p>
-<p><img src="http://qiniu.jsblog.fun//img/github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81.png" alt="github学生认证"></p>
-<blockquote>
-<p>可以按我的写，我写的是</p>
-<p>I want to learn coding and try to make contribution to the community. I want to do my best to improve myself and the community.</p>
-</blockquote>
-<p>然后根据申请上传材料，尽量把链接复制到手机上，用手机拍照，不然会因为没拍照而被拒。</p>
-<p>我用的申请材料：(这些材料中尽量出现学校名称和日期，这个也是被拒的理由之一)</p>
-<blockquote>
-<ol>
-<li>学信网学籍认证，翻译成了英文。</li>
-<li>学生证。</li>
-<li>成绩单</li>
-<li>学生卡</li>
-</ol>
-</blockquote>
-<p>这些是我在10几次的申请中的使用材料。</p>
-<p>最后一次的血泪教训：</p>
-<p>修改个人资料，一定要把 user profile填完整！</p>
-<p>包括Name、Bio一定要填上自己的真实姓名和学校。</p>
-<p>如果实在不行，我还把头像换成了自己的证件照…	</p>
-<p>我最最最最没想到的，我是因为这个username多次被拒绝，在设置里改成自己的名字之后就通过了。</p>
-<p><img src="http://qiniu.jsblog.fun//img/username.png" alt="username"></p>
-<p>经过修改这个名字，我的申请就迅速通过了。</p>
-<p><img src="http://qiniu.jsblog.fun//img/Approved.png" alt="Approved"></p>
-<p>下面开始享受自己的学生福利吧！</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>学生认证</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Typora设置图片的自动上传保存</title>
-    <url>/2023/03/27/Typora%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/</url>
-    <content><![CDATA[<p>Typora设置图片自动上传七牛云图床并转换url</p>
-<span id="more"></span>
-
-<p>每次使用Typora的时候，总是不敢插入图片。</p>
-<p>因为每次插入图片，你一不小心变动位置或者移动文件，源图片就会失效。</p>
-<p>所以今天我尝试将图片自动上传到储存端，保证图片的永久保存。</p>
-<h2 id="1-准备图床"><a href="#1-准备图床" class="headerlink" title="1. 准备图床"></a>1. 准备图床</h2><p>首先选择一下图床，用于在云端储存我的图片。</p>
-<p>这里我有两个选择：</p>
-<ol>
-<li>阿里云oss：一年9块钱，40GB存储空间。</li>
-</ol>
-<p>​		购买地址：<a href="https://common-buy.aliyun.com/?spm=5176.7933691.J_5253785160.2.7c9c4c59pucWmL&commodityCode=ossbag#/buy">阿里云oss</a></p>
-<ol start="2">
-<li><p>七牛云：免费，每个月10GB</p>
-<p>七牛云有优惠卷，但是用完和阿里云差不多，也是每个月40GB</p>
-<p>另外，还有一个教育邮箱一年免费40GB的活动，因此我准备使用七牛云来搭建图床。</p>
-<p><a href="https://marketing.qiniu.com/activity/student_growth?utm_source=notification&utm_medium=banner&utm_content=banner&utm_campaign=%E6%A0%A1%E5%9B%AD%E8%AE%A4%E8%AF%81&_channel_track_key=jpe4Z4cd">七牛云校园开发者成长计划</a></p>
-</li>
-</ol>
-<p>​		它还附赠了好多服务，截图一下：</p>
-<p><img src="http://qiniu.jsblog.fun//img/%E4%B8%83%E7%89%9B%E4%BA%91%E6%A0%A1%E5%9B%AD%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A1%E5%88%92.png" alt="七牛云校园开发者计划"></p>
-<p>校园用户免费使用一年，暂时先使用这个作为图床。</p>
-<h2 id="2-安装PicGo并配置七牛云图床"><a href="#2-安装PicGo并配置七牛云图床" class="headerlink" title="2. 安装PicGo并配置七牛云图床"></a>2. 安装PicGo并配置七牛云图床</h2><p>从<a href="https://github.com/Molunerfinn/picgo/releases">PicGo github</a>下载2.4.0-beta.0版本。</p>
-<p>因为我个人比较喜欢尝鲜新功能，所以选了最新版，追求稳定的可以选择前一个版本稳定版。</p>
-<p>下载完成之后安装、打开：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230327131108699.png" alt="image-20230327131108699"></p>
-<p>PicGo切换到七牛云配置界面：</p>
-<p><img src="http://qiniu.jsblog.fun//img/PicGo%E9%85%8D%E7%BD%AE.png" alt="PicGo配置"></p>
-<p>配置如图所示，</p>
-<p>其中AccessKey和SecretKey需要到其幸运右上角头像这里进行查找：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230327133106184.png" alt="image-20230327133106184"></p>
-<p>点击后复制这两项：</p>
-<p><img src="http://qiniu.jsblog.fun//img/20230327133456.png" alt="20230327133456"></p>
-<p>Bucket是创建空间的空间名，我们先创建空间：</p>
-<p><img src="http://qiniu.jsblog.fun//img/%E5%88%9B%E5%BB%BA%E7%A9%BA%E9%97%B4.png" alt="创建空间"></p>
-<p>Bucket是这个：</p>
-<p><img src="http://qiniu.jsblog.fun//img/Bucket.png" alt="Bucket"></p>
-<p>设定访问网址：</p>
-<p>进入空间最后的域名管理-&gt;绑定域名</p>
-<p><img src="http://qiniu.jsblog.fun//img/%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png" alt="绑定域名"></p>
-<p>然后配置一下CNAME，这里有官方教程：<a href="https://developer.qiniu.com/fusion/kb/1322/how-to-configure-cname-domain-name">CNAME如何配置</a>，配置成功之后如下图：</p>
-<p><img src="http://qiniu.jsblog.fun//img/%E7%BB%91%E5%AE%9A%E6%88%90%E5%8A%9F.png" alt="绑定成功"></p>
-<p>注意！存储区域一定要根据自己存储区域来设置：</p>
-<p>七牛云的存储区域（华东 z0，华北 z1，华南 z2，北美 na0，东南亚 as0 ），一定要根据你空间所在的区域，填对应的代码。</p>
-<p>如果不存储区域设置错误，它会显示如下错误（血与泪的教训）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2023-03-27 13:37:12 [PicGo ERROR] </span><br><span class="line">------Error Stack Begin------</span><br><span class="line">Error: read file  error</span><br><span class="line">    at D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:38189</span><br><span class="line">    at async Promise.all (index 0)</span><br><span class="line">    at async Object.handle (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:37138)</span><br><span class="line">    at async $e.doTransform (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:16679)</span><br><span class="line">    at async $e.start (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:15916)</span><br><span class="line">    at async Tt.upload (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:71270)</span><br><span class="line">    at async Object.upload (D:\PicGo\resources\app.asar\background.js:2:661590)</span><br><span class="line">    at async zn (D:\PicGo\resources\app.asar\background.js:2:664240)</span><br><span class="line">    at async D:\PicGo\resources\app.asar\background.js:2:665314</span><br><span class="line">-------Error Stack End------- </span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="2-安装PicGo-core命令行-2023-04-15"><a href="#2-安装PicGo-core命令行-2023-04-15" class="headerlink" title="2. 安装PicGo-core命令行(2023-04-15)"></a>2. 安装PicGo-core命令行(2023-04-15)</h2><p>经过这半个多月的使用，我发现PicGo app经常会卡死，第一次打开app也比较慢，经常会占用大量资源。</p>
-<p>所以我考虑使用PicGo-core，命令行、轻量化、占用资源更少。</p>
-<p>先从Typora处安装，出现ftp错误</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230415155617911.png" alt="image-20230415155617911"></p>
-<p>会出现这个错误：</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230415160705489.png" alt="image-20230415160705489"></p>
-<p>下载好了也会出现错误，所以我选择手动安装</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#全局安装PicGo-core</span></span><br><span class="line">&gt; npm install picgo -g</span><br><span class="line">&gt; picgo <span class="comment">#试一下安装是否成功，成果的话会出现命令选项</span></span><br><span class="line"><span class="comment">#如下：</span></span><br><span class="line">C:\Users\用户名&gt;picgo</span><br><span class="line">Usage: picgo [options] [<span class="built_in">command</span>]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -v, --version                        output the version number</span><br><span class="line">  -d, --debug                          debug mode</span><br><span class="line">  -s, --silent                         silent mode</span><br><span class="line">  -c, --config &lt;path&gt;                  <span class="built_in">set</span> config path</span><br><span class="line">  -p, --proxy &lt;url&gt;                    <span class="built_in">set</span> proxy <span class="keyword">for</span> uploading</span><br><span class="line">  -h, --<span class="built_in">help</span>                           display <span class="built_in">help</span> <span class="keyword">for</span> <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  install|add [options] &lt;plugins...&gt;   install picgo plugin</span><br><span class="line">  uninstall|<span class="built_in">rm</span> &lt;plugins...&gt;            uninstall picgo plugin</span><br><span class="line">  update [options] &lt;plugins...&gt;        update picgo plugin</span><br><span class="line">  <span class="built_in">set</span>|config &lt;module&gt; [name]           configure config of picgo modules</span><br><span class="line">  upload|u [input...]                  upload, go go go</span><br><span class="line">  use [module]                         use modules of picgo</span><br><span class="line">  init [options] &lt;template&gt; [project]  create picgo plugin<span class="string">&#x27;s development templates</span></span><br><span class="line"><span class="string">  i18n [lang]                          change picgo language</span></span><br><span class="line"><span class="string">  help [command]                       display help for command</span></span><br></pre></td></tr></table></figure>
-
-<p>手动安装后进入<code>C:\Users\用户名\.picgo</code>修改配置文件<code>config.json</code>修改配置文件：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;picBed&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;current&quot;</span><span class="punctuation">:</span> <span class="string">&quot;qiniu&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;qiniu&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;accessKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这里输入七牛云密钥的AK&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;secretKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这里输入七牛云密钥的SK&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bucket&quot;</span><span class="punctuation">:</span> <span class="string">&quot;输入你的域名空间名称&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;输入你的图床存储域名&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;area&quot;</span><span class="punctuation">:</span> <span class="string">&quot;填写区域代码&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;options&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;img/ 这里可以写你的储存后缀&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;picgoPlugins&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>这样就配置完成了，然后使用Typora测试一下</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230415181719668.png" alt="image-20230415181719668"></p>
-<p>验证成功即可在Typora中使用，</p>
-<h3 id="PicGo-core出现的问题："><a href="#PicGo-core出现的问题：" class="headerlink" title="PicGo-core出现的问题："></a>PicGo-core出现的问题：</h3><h4 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h4><p>如果上传过后自动输入的url文件后缀名变成了<code>pngundefined </code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://XXXX.COM//img/image-XXXX.pngundefined</span><br></pre></td></tr></table></figure>
-
-<p>是由于<code>config.json</code>文件未包含<code> &quot;options&quot;: &quot;&quot;,</code>，即使设置成空的也要加入，不然就会这样。</p>
-<h4 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h4><p>npm安装的时候：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm WARN deprecated @types/bson@4.2.0: This is a stub types definition. bson provides its own type definitions, so you do not need this installed.</span><br></pre></td></tr></table></figure>
-
-<p>经测试，这样我安装没什么问题，只是个警告而已。</p>
-<p>也可以更新一下npm</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm -v</span><br><span class="line">npm install -g npm</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-配置Typora"><a href="#3-配置Typora" class="headerlink" title="3. 配置Typora"></a>3. 配置Typora</h2><p>这是配置的最后一步，终于要完成自动上传图片了。</p>
-<p>进入Typora，选择偏好设置：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230327141434940.png" alt="image-20230327141434940"></p>
-<p>进入偏好设置后选择图像，进行进一步设置</p>
-<p><img src="http://qiniu.jsblog.fun//img/Typora%E8%AE%BE%E7%BD%AE.png"></p>
-<h2 id="4-测试能否顺利上传"><a href="#4-测试能否顺利上传" class="headerlink" title="4. 测试能否顺利上传"></a>4. 测试能否顺利上传</h2><p>终于！Typora的自动上传图片功能配置完成！</p>
-<p>向Typora里粘贴一下图片试试能否正常上传。</p>
-<p>上传成功后可以在PicGo相册中查看到上传的图片。</p>
-<p>注意：一定要开着PicGo程序哦~</p>
-]]></content>
-      <categories>
-        <category>markdown</category>
-      </categories>
-      <tags>
-        <tag>图床设置</tag>
       </tags>
   </entry>
   <entry>
@@ -435,96 +217,221 @@
       </tags>
   </entry>
   <entry>
-    <title>Windows server+v2ray+tls+wb+nginx代理服务器搭建</title>
-    <url>/2023/04/09/windows%20server+TLS+websocket+nginx/</url>
-    <content><![CDATA[<p>使用windows server 2012 完成v2ray+tls+wb+nginx的搭建</p>
-<span id="more"></span>
+    <title>基于Github的个人博客网站使用https协议</title>
+    <url>/2023/04/14/Github%E5%8D%9A%E5%AE%A2-%E4%BD%BF%E7%94%A8https%E5%8D%8F%E8%AE%AE/</url>
+    <content><![CDATA[<p>在访问自己的网站时，网页经常提示http连接不安全。</p>
+<p>今天就通过设置，将http协议改为https，去除连接不安全。</p>
+ <span id="more"></span>
 
-<h2 id="Windows-server-v2ray-tls-wb-nginx"><a href="#Windows-server-v2ray-tls-wb-nginx" class="headerlink" title="Windows server+v2ray+tls+wb+nginx"></a>Windows server+v2ray+tls+wb+nginx</h2><p>下面尝试一下用windows server套tls和nginx反向代理，其实很简单，如果Linux的学会了之后windows图形界面就很简单了。</p>
-<p>这个是我之前用<a href="http://jsblog.fun/2023/04/08/V2ray+TLS+websocket+cdn%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/">Linux构建流程</a>，整篇博客内容均来自<a href="https://bulianglin.com/403.php">不良林</a>，更详细的步骤可以看不良林的视频。</p>
-<p>下面正式开始：</p>
-<h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><ul>
-<li>一个解析好的域名，指向自己的windows服务器，国内国外都可以。</li>
-<li><a href="https://www.win-acme.com/">win-amch</a>：用于windows创建证书,直接download下载就可以。</li>
-<li><a href="https://nginx.org/en/download.html">Nginx</a>：web server，用于创建网页，选择stable version下载。</li>
-<li>一台windows server服务器</li>
-</ul>
-<h3 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h3><p>进入购买域名的商家控制台，我这里用的是腾讯云：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409182730326.png" alt="image-20230409182730326"></p>
-<p>在控制台中加入两条A记录，指向自己的服务器IP，完成解析。</p>
-<p>解析完成后可以在cmd命令行中ping一下自己的<strong>域名</strong>，看看主机地址是不是自己指向的：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409182946855.png" alt="image-20230409182946855"></p>
-<p>有没有回复无所谓，只需要证明A记录生效了就可以。</p>
-<h3 id="开启网站端口"><a href="#开启网站端口" class="headerlink" title="开启网站端口"></a>开启网站端口</h3><p>因为搭建一个网站需要用到服务器的80和443端口，所以我们在正式部署之前先开放一下这两个端口。</p>
-<p>我windws服务器所使用的系统是<code>windows server 2012</code>，通过<code>server manager</code>开放端口。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409183628824.png" alt="image-20230409183628824"></p>
-<p>添加进站规则：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409183822332.png" alt="image-20230409183822332"></p>
-<p>然后选择<code>port</code>:</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409183851700.png" alt="image-20230409183851700"></p>
-<p>输入端口：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409183946957.png" alt="image-20230409183946957"></p>
-<p>然后下一步下一步，输入这项规则的名称，其余保持默认就可以了，设置完成之后可以发现它已经在进展规则里了：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409184050861.png" alt="image-20230409184050861"></p>
-<p>然后我们可以进行下一步了。</p>
-<h3 id="注册ECC证书"><a href="#注册ECC证书" class="headerlink" title="注册ECC证书"></a>注册ECC证书</h3><p>以下内容参考自<a href="https://bulianglin.com/403.php">不良林</a>的视频：</p>
-<p>对于TLS来说，证书是必不可少的。</p>
-<p>我们使用win-acme来注册证书，从网站下载后，解压，打开wacs：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409184300902.png" alt="image-20230409184300902"></p>
-<p>然后按照以下步骤注册证书：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409193350929.png" alt="image-20230409193350929"></p>
-<p>选择M，表示使用完全选项。</p>
-<p>然后Enter，按默认的走。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409193706311.png" alt="image-20230409193706311"></p>
-<p>这里输入你的域名，然后Enter确认一次。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409193706311.png"></p>
-<p>这里选择1，表示http证书</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409193827086.png" alt="image-20230409193827086"></p>
-<p>这里输入网站的根地址，就是Nginx储存html的地址</p>
-<p>我的地址是这样的<code>C:\Users\XXX\Desktop\nginx-1.22.1\nginx-1.22.1\html</code></p>
-<p>然后Enter使用默认配置</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409194203769.png" alt="image-20230409194203769"></p>
-<p>密钥的类型这里我们选择1：ECCkey</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409194253689.png" alt="image-20230409194253689"></p>
-<p>证书的格式我们选择2：Nginx配置所用的</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409194350730.png" alt="image-20230409194350730"></p>
-<p>密钥文件保存在哪里，我们选择在V2ray的目录：<code>C:\Users\XXX\Desktop\v2ray-windows-64</code></p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409194446784.png" alt="image-20230409194446784"></p>
-<p>私钥的密码，我们选择1，不设置密码。</p>
-<p>剩下的就全部Enter选择默认就可以了。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409194550065.png" alt="image-20230409194550065"></p>
-<p>验证通过（<code>valid</code>）后即可在保存的路径找到pem文件，我们只需要保存以下两个，剩下的删掉就可以：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409193238643.png" alt="image-20230409193238643"></p>
-<h3 id="配置V2ray和Nginx"><a href="#配置V2ray和Nginx" class="headerlink" title="配置V2ray和Nginx"></a>配置V2ray和Nginx</h3><blockquote>
-<p>以下配置文件均从<a href="https://bulianglin.com/403.php">不良林</a>处copy过来</p>
+<h2 id="第一步：Github开启enforce-https"><a href="#第一步：Github开启enforce-https" class="headerlink" title="第一步：Github开启enforce https"></a>第一步：Github开启enforce https</h2><p>从Github开启https非常简单</p>
+<p>找到自己的仓库：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173517899.png" alt="image-20230414173517899"></p>
+<p>进入仓库项目的Settings-&gt;Github pages：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173616449.png" alt="image-20230414173616449"></p>
+<p>往下滑滑滑</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173701977.png" alt="image-20230414173701977"></p>
+<p>我是直接开启就可以，看到有人说这个按钮是灰色的，如是灰色的解决方法：</p>
+<blockquote>
+<p>那么如果如果之前已经开启了自定义域名， <code>enforce HTTPS</code>  无法勾选且怎么办？</p>
+<p>按照官方提示，进行如下操作：</p>
+<ol>
+<li><p>把 Custom domain 中的值清空，并点击 <code>Save</code>  进行保存；</p>
+</li>
+<li><p>在 Custom domain 中的填入之前清空的值，我这里是 <code>likfe.com</code> ，填入后点击保存；</p>
+</li>
+<li><p>尝试在浏览器里主动访问 域名，地址要根据自己的情况，注意协议类型是 https，正确情况下是能正常访问的；</p>
+</li>
+<li><p>刷新项目设置页，如果  <code>enforce HTTPS</code>  可勾选，勾选即可；</p>
+</li>
+<li><p>如果  <code>enforce HTTPS</code>  不可勾选，并且提示  <code>Not yet available for your site because the certificate has not finished being issued”</code> ，说明证书尚未申请完成，等待一天即可。</p>
+<p>转载自<a href="https://cloud.tencent.com/developer/user/1078698">他叫自己MR.张</a></p>
+</li>
+</ol>
 </blockquote>
-<p>Nginx的使用方法：</p>
-<p><code>双击</code>即可启动，要想修改配置文件，就找到Nginx主目录下的&#x2F;conf&#x2F;nginx.conf中进行修改。</p>
-<p>先启动Nginx，在浏览器地址栏输入自己的IP，应该能看到Nginx的欢迎界面：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409194906023.png" alt="image-20230409194906023"></p>
-<p>然后修改V2ray的配置文件：&#x2F;v2ray-windows-64&#x2F;config.json</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;inbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;port&quot;</span>: 8388, <span class="comment">#准备开放的端口</span></span><br><span class="line">      <span class="string">&quot;listen&quot;</span>:<span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">      <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;vmess&quot;</span>,</span><br><span class="line">      <span class="string">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;clients&quot;</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="string">&quot;id&quot;</span>: <span class="string">&quot;c98ee1c3-5ea3-4fbf-a458-4c8393149f2a&quot;</span>, <span class="comment">#自己生成的id</span></span><br><span class="line">            <span class="string">&quot;alterId&quot;</span>: 0</span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;streamSettings&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;network&quot;</span>: <span class="string">&quot;ws&quot;</span>,  <span class="comment">#修改协议为ws</span></span><br><span class="line">        <span class="string">&quot;wsSettings&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;path&quot;</span>: <span class="string">&quot;/ray&quot;</span>  <span class="comment">#配置的路径</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;outbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;freedom&quot;</span>,</span><br><span class="line">      <span class="string">&quot;settings&quot;</span>: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>修改Nginx：&#x2F;Nginx&#x2F;conf&#x2F;nginx.conf</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">worker_processes  1;</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    server &#123;</span><br><span class="line">       listen 443 ssl http2;</span><br><span class="line"></span><br><span class="line">       server_name win.buliang0.tk;  <span class="comment">#你的域名</span></span><br><span class="line">       ssl_certificate       C:\\Users\\Administrator\\Desktop\\v2ray-windows-64\\cer.pem;  <span class="comment">#证书</span></span><br><span class="line">       ssl_certificate_key   C:\\Users\\Administrator\\Desktop\\v2ray-windows-64\\key.pem; <span class="comment">#私钥</span></span><br><span class="line">       </span><br><span class="line">       ssl_protocols         TLSv1.2 TLSv1.3;</span><br><span class="line">       ssl_ciphers           ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;</span><br><span class="line">       ssl_prefer_server_ciphers off;</span><br><span class="line"></span><br><span class="line">       location / &#123;</span><br><span class="line">           proxy_pass https://www.bing.com; <span class="comment">#伪装网址</span></span><br><span class="line">           proxy_ssl_server_name on;</span><br><span class="line">           proxy_redirect off;</span><br><span class="line">           sub_filter_once off;</span><br><span class="line">           sub_filter <span class="string">&quot;www.bing.com&quot;</span> <span class="variable">$server_name</span>;</span><br><span class="line">           proxy_set_header Host <span class="string">&quot;www.bing.com&quot;</span>;</span><br><span class="line">           proxy_set_header Referer <span class="variable">$http_referer</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header User-Agent <span class="variable">$http_user_agent</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-Proto https;</span><br><span class="line">           proxy_set_header Accept-Encoding <span class="string">&quot;&quot;</span>;</span><br><span class="line">           proxy_set_header Accept-Language <span class="string">&quot;zh-CN&quot;</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       location /ray &#123;</span><br><span class="line">           proxy_redirect off;</span><br><span class="line">           proxy_pass http://127.0.0.1:8388; <span class="comment">#v2ray监听端口</span></span><br><span class="line">           proxy_http_version 1.1;</span><br><span class="line">           proxy_set_header Upgrade <span class="variable">$http_upgrade</span>;</span><br><span class="line">           proxy_set_header Connection <span class="string">&quot;upgrade&quot;</span>;</span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line"></span><br><span class="line">        location /.well-known/ &#123;</span><br><span class="line">               root   html;</span><br><span class="line">            &#125;</span><br><span class="line">        location / &#123;</span><br><span class="line">            rewrite ^(.*)$ https://$host<span class="variable">$1</span> permanent;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>修改好后，重新启动Nginx和V2ray</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#V2ray 先关闭原来的黑窗口命令行，将V2ray主程序拖进cmd，自动显示这个程序</span></span><br><span class="line">$ V2ray.exe run</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Nginx找到主目录，将Nginx主程序拖进cmd</span></span><br><span class="line">$ nginx.exe -s reload</span><br></pre></td></tr></table></figure>
-
-<p>然后在V2rayN主程序中设置一下：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230409195817945.png" alt="image-20230409195817945"></p>
-<p>配置好后，Tcpping一下能通后，进行真连接延迟测试，都能通过的话即可正常使用代理服务器！</p>
-<p>最后老样子，测试一下服务器的安全性：<a href="https://www.ssllabs.com/ssltest/index.html">Qualys SSL Labs’s SSL Server Test</a></p>
-<p><img src="http://qiniu.jsblog.fun//img/A.png" alt="A"></p>
-<p>测试结果为A+，情理之中！</p>
+<h3 id="出现http和https混合内容"><a href="#出现http和https混合内容" class="headerlink" title="出现http和https混合内容"></a>出现http和https混合内容</h3><p>这样设置完成后，我出现了</p>
+<p><code>xed Content: The page at &#39;&lt;URL&gt;&#39; was loaded over HTTPS, but requested an insecure element &#39;&lt;URL&gt;&#39;. ....</code></p>
+<p>这个错误原因是因为我们访问域名用的是https流量，但是引用图片资源却是用的http流量，这会导致图片无法查看。</p>
+<p>于是我们需要去给我们的静态资源配置https证书，由于我的图片是存在七牛云的图床中，所以我进入七牛云配置一下自己的图床。</p>
+<h2 id="第二步：配置https证书"><a href="#第二步：配置https证书" class="headerlink" title="第二步：配置https证书"></a>第二步：配置https证书</h2><p>进入<a href="https://portal.qiniu.com/certificate/ssl">七牛云证书管理</a>，去申请ssl证书</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174540614.png" alt="image-20230414174540614"></p>
+<p>DV单域名证书是免费的，所以我们购买这个证书：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174650420.png"></p>
+<p>核对信息并支付，一定要是0元哈。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174710391.png" alt="image-20230414174710391"></p>
+<p>下面我们对信息进行补全：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174806248.png" alt="image-20230414174806248"></p>
+<p>公司信息可以瞎填一下，毕竟我们是个人，只要填满了申请CA证书就可以了。</p>
+<p>补充好了之后，我们就可以配置DNS信息了：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414172535082.png" alt="image-20230414172535082"></p>
+<p>在自己的控制台，我是腾讯云，按照要求的解析配置：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175202848.png" alt="image-20230414175202848"></p>
+<p>解析好后，域名验证一下，验证好了后等待CA机构审核，审核好后就自动配置好证书了，也可以在域名管理中修改：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175509903.png" alt="image-20230414175509903"></p>
+<p>我们还可以在域名管理设置一下防盗链白名单，防止其他人盗走我们的图片：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175600770.png" alt="image-20230414175600770"></p>
+<p>好了，现在访问自己的网址，可以发现有一把小锁了：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230414175953704.png" alt="image-20230414175953704"></p>
 ]]></content>
       <categories>
-        <category>Virtual Machine</category>
+        <category>Blog</category>
       </categories>
       <tags>
-        <tag>VPS</tag>
+        <tag>博客小站</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Typora设置图片的自动上传保存</title>
+    <url>/2023/03/27/Typora%E8%AE%BE%E7%BD%AE%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/</url>
+    <content><![CDATA[<p>Typora设置图片自动上传七牛云图床并转换url</p>
+<span id="more"></span>
+
+<p>每次使用Typora的时候，总是不敢插入图片。</p>
+<p>因为每次插入图片，你一不小心变动位置或者移动文件，源图片就会失效。</p>
+<p>所以今天我尝试将图片自动上传到储存端，保证图片的永久保存。</p>
+<h2 id="1-准备图床"><a href="#1-准备图床" class="headerlink" title="1. 准备图床"></a>1. 准备图床</h2><p>首先选择一下图床，用于在云端储存我的图片。</p>
+<p>这里我有两个选择：</p>
+<ol>
+<li>阿里云oss：一年9块钱，40GB存储空间。</li>
+</ol>
+<p>​		购买地址：<a href="https://common-buy.aliyun.com/?spm=5176.7933691.J_5253785160.2.7c9c4c59pucWmL&commodityCode=ossbag#/buy">阿里云oss</a></p>
+<ol start="2">
+<li><p>七牛云：免费，每个月10GB</p>
+<p>七牛云有优惠卷，但是用完和阿里云差不多，也是每个月40GB</p>
+<p>另外，还有一个教育邮箱一年免费40GB的活动，因此我准备使用七牛云来搭建图床。</p>
+<p><a href="https://marketing.qiniu.com/activity/student_growth?utm_source=notification&utm_medium=banner&utm_content=banner&utm_campaign=%E6%A0%A1%E5%9B%AD%E8%AE%A4%E8%AF%81&_channel_track_key=jpe4Z4cd">七牛云校园开发者成长计划</a></p>
+</li>
+</ol>
+<p>​		它还附赠了好多服务，截图一下：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E4%B8%83%E7%89%9B%E4%BA%91%E6%A0%A1%E5%9B%AD%E5%BC%80%E5%8F%91%E8%80%85%E8%AE%A1%E5%88%92.png" alt="七牛云校园开发者计划"></p>
+<p>校园用户免费使用一年，暂时先使用这个作为图床。</p>
+<h2 id="2-安装PicGo并配置七牛云图床"><a href="#2-安装PicGo并配置七牛云图床" class="headerlink" title="2. 安装PicGo并配置七牛云图床"></a>2. 安装PicGo并配置七牛云图床</h2><p>从<a href="https://github.com/Molunerfinn/picgo/releases">PicGo github</a>下载2.4.0-beta.0版本。</p>
+<p>因为我个人比较喜欢尝鲜新功能，所以选了最新版，追求稳定的可以选择前一个版本稳定版。</p>
+<p>下载完成之后安装、打开：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230327131108699.png" alt="image-20230327131108699"></p>
+<p>PicGo切换到七牛云配置界面：</p>
+<p><img src="http://qiniu.jsblog.fun//img/PicGo%E9%85%8D%E7%BD%AE.png" alt="PicGo配置"></p>
+<p>配置如图所示，</p>
+<p>其中AccessKey和SecretKey需要到其幸运右上角头像这里进行查找：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230327133106184.png" alt="image-20230327133106184"></p>
+<p>点击后复制这两项：</p>
+<p><img src="http://qiniu.jsblog.fun//img/20230327133456.png" alt="20230327133456"></p>
+<p>Bucket是创建空间的空间名，我们先创建空间：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E5%88%9B%E5%BB%BA%E7%A9%BA%E9%97%B4.png" alt="创建空间"></p>
+<p>Bucket是这个：</p>
+<p><img src="http://qiniu.jsblog.fun//img/Bucket.png" alt="Bucket"></p>
+<p>设定访问网址：</p>
+<p>进入空间最后的域名管理-&gt;绑定域名</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E7%BB%91%E5%AE%9A%E5%9F%9F%E5%90%8D.png" alt="绑定域名"></p>
+<p>然后配置一下CNAME，这里有官方教程：<a href="https://developer.qiniu.com/fusion/kb/1322/how-to-configure-cname-domain-name">CNAME如何配置</a>，配置成功之后如下图：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E7%BB%91%E5%AE%9A%E6%88%90%E5%8A%9F.png" alt="绑定成功"></p>
+<p>注意！存储区域一定要根据自己存储区域来设置：</p>
+<p>七牛云的存储区域（华东 z0，华北 z1，华南 z2，北美 na0，东南亚 as0 ），一定要根据你空间所在的区域，填对应的代码。</p>
+<p>如果不存储区域设置错误，它会显示如下错误（血与泪的教训）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2023-03-27 13:37:12 [PicGo ERROR] </span><br><span class="line">------Error Stack Begin------</span><br><span class="line">Error: read file  error</span><br><span class="line">    at D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:38189</span><br><span class="line">    at async Promise.all (index 0)</span><br><span class="line">    at async Object.handle (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:37138)</span><br><span class="line">    at async $e.doTransform (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:16679)</span><br><span class="line">    at async $e.start (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:15916)</span><br><span class="line">    at async Tt.upload (D:\PicGo\resources\app.asar\node_modules\picgo\dist\index.cjs.js:1:71270)</span><br><span class="line">    at async Object.upload (D:\PicGo\resources\app.asar\background.js:2:661590)</span><br><span class="line">    at async zn (D:\PicGo\resources\app.asar\background.js:2:664240)</span><br><span class="line">    at async D:\PicGo\resources\app.asar\background.js:2:665314</span><br><span class="line">-------Error Stack End------- </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-安装PicGo-core命令行-2023-04-15"><a href="#2-安装PicGo-core命令行-2023-04-15" class="headerlink" title="2. 安装PicGo-core命令行(2023-04-15)"></a>2. 安装PicGo-core命令行(2023-04-15)</h2><p>经过这半个多月的使用，我发现PicGo app经常会卡死，第一次打开app也比较慢，经常会占用大量资源。</p>
+<p>所以我考虑使用PicGo-core，命令行、轻量化、占用资源更少。</p>
+<p>先从Typora处安装，出现ftp错误</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230415155617911.png" alt="image-20230415155617911"></p>
+<p>会出现这个错误：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230415160705489.png" alt="image-20230415160705489"></p>
+<p>下载好了也会出现错误，所以我选择手动安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#全局安装PicGo-core</span></span><br><span class="line">&gt; npm install picgo -g</span><br><span class="line">&gt; picgo <span class="comment">#试一下安装是否成功，成果的话会出现命令选项</span></span><br><span class="line"><span class="comment">#如下：</span></span><br><span class="line">C:\Users\用户名&gt;picgo</span><br><span class="line">Usage: picgo [options] [<span class="built_in">command</span>]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line">  -v, --version                        output the version number</span><br><span class="line">  -d, --debug                          debug mode</span><br><span class="line">  -s, --silent                         silent mode</span><br><span class="line">  -c, --config &lt;path&gt;                  <span class="built_in">set</span> config path</span><br><span class="line">  -p, --proxy &lt;url&gt;                    <span class="built_in">set</span> proxy <span class="keyword">for</span> uploading</span><br><span class="line">  -h, --<span class="built_in">help</span>                           display <span class="built_in">help</span> <span class="keyword">for</span> <span class="built_in">command</span></span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  install|add [options] &lt;plugins...&gt;   install picgo plugin</span><br><span class="line">  uninstall|<span class="built_in">rm</span> &lt;plugins...&gt;            uninstall picgo plugin</span><br><span class="line">  update [options] &lt;plugins...&gt;        update picgo plugin</span><br><span class="line">  <span class="built_in">set</span>|config &lt;module&gt; [name]           configure config of picgo modules</span><br><span class="line">  upload|u [input...]                  upload, go go go</span><br><span class="line">  use [module]                         use modules of picgo</span><br><span class="line">  init [options] &lt;template&gt; [project]  create picgo plugin<span class="string">&#x27;s development templates</span></span><br><span class="line"><span class="string">  i18n [lang]                          change picgo language</span></span><br><span class="line"><span class="string">  help [command]                       display help for command</span></span><br></pre></td></tr></table></figure>
+
+<p>手动安装后进入<code>C:\Users\用户名\.picgo</code>修改配置文件<code>config.json</code>修改配置文件：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;picBed&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;current&quot;</span><span class="punctuation">:</span> <span class="string">&quot;qiniu&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;qiniu&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;accessKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这里输入七牛云密钥的AK&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;secretKey&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这里输入七牛云密钥的SK&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;bucket&quot;</span><span class="punctuation">:</span> <span class="string">&quot;输入你的域名空间名称&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;输入你的图床存储域名&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;area&quot;</span><span class="punctuation">:</span> <span class="string">&quot;填写区域代码&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;options&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;img/ 这里可以写你的储存后缀&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;picgoPlugins&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就配置完成了，然后使用Typora测试一下</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230415181719668.png" alt="image-20230415181719668"></p>
+<p>验证成功即可在Typora中使用，</p>
+<h3 id="PicGo-core出现的问题："><a href="#PicGo-core出现的问题：" class="headerlink" title="PicGo-core出现的问题："></a>PicGo-core出现的问题：</h3><h4 id="问题1"><a href="#问题1" class="headerlink" title="问题1"></a>问题1</h4><p>如果上传过后自动输入的url文件后缀名变成了<code>pngundefined </code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://XXXX.COM//img/image-XXXX.pngundefined</span><br></pre></td></tr></table></figure>
+
+<p>是由于<code>config.json</code>文件未包含<code> &quot;options&quot;: &quot;&quot;,</code>，即使设置成空的也要加入，不然就会这样。</p>
+<h4 id="问题2"><a href="#问题2" class="headerlink" title="问题2"></a>问题2</h4><p>npm安装的时候：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm WARN deprecated @types/bson@4.2.0: This is a stub types definition. bson provides its own type definitions, so you do not need this installed.</span><br></pre></td></tr></table></figure>
+
+<p>经测试，这样我安装没什么问题，只是个警告而已。</p>
+<p>也可以更新一下npm</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm -v</span><br><span class="line">npm install -g npm</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-配置Typora"><a href="#3-配置Typora" class="headerlink" title="3. 配置Typora"></a>3. 配置Typora</h2><p>这是配置的最后一步，终于要完成自动上传图片了。</p>
+<p>进入Typora，选择偏好设置：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230327141434940.png" alt="image-20230327141434940"></p>
+<p>进入偏好设置后选择图像，进行进一步设置</p>
+<p><img src="http://qiniu.jsblog.fun//img/Typora%E8%AE%BE%E7%BD%AE.png"></p>
+<h2 id="4-测试能否顺利上传"><a href="#4-测试能否顺利上传" class="headerlink" title="4. 测试能否顺利上传"></a>4. 测试能否顺利上传</h2><p>终于！Typora的自动上传图片功能配置完成！</p>
+<p>向Typora里粘贴一下图片试试能否正常上传。</p>
+<p>上传成功后可以在PicGo相册中查看到上传的图片。</p>
+<p>注意：一定要开着PicGo程序哦~</p>
+]]></content>
+      <categories>
+        <category>markdown</category>
+      </categories>
+      <tags>
+        <tag>图床设置</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Github学生认证记录</title>
+    <url>/2023/04/02/Github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81%E7%94%B3%E8%AF%B7%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<p>最近github copliot很火爆，因为它编程的帮助功能很好用。</p>
+<p>但是只能免费试用60天，而学生认证可以永久免费，我正好还是大学生，所以认证一下。</p>
+<p>除此之外呢，github的<a href="https://education.github.com/pack">学生包</a>有很多福利，点击链接查看。</p>
+<p>以下是个人申请的经历，总共申请了12次，成功。</p>
+<span id="more"></span>
+
+<h2 id="准备材料"><a href="#准备材料" class="headerlink" title="准备材料"></a>准备材料</h2><blockquote>
+<p>转载自<a href="https://zhuanlan.zhihu.com/p/578964972">知乎用户Akari</a></p>
+<ul>
+<li>教育邮箱（即学校发放的<a href="https://link.zhihu.com/?target=http://edu.cn">http://edu.cn</a>后缀的邮箱）（非必须）**(我有，所以用了)**</li>
+<li>以下材料四选一</li>
+</ul>
+<ol>
+<li>带有学校名称，学校公章（如有），个人信息及有效期的学生证 <strong>（申请过程中使用了）</strong></li>
+<li>带有学校名称，入学日期和学校公章的录取通知书（推荐） <strong>（未使用）</strong></li>
+<li>学信网的个人学籍报告或学校出具的在读证明（最好是学校信纸头的），最好是英文版的（推荐） <strong>（使用了，将中文报告用网页翻译成英文然后截的图）</strong></li>
+<li>学期课表等Github支持的其他认证材料（不推荐） <strong>（未使用）</strong></li>
+</ol>
+</blockquote>
+<h2 id="开始申请"><a href="#开始申请" class="headerlink" title="开始申请"></a>开始申请</h2><p><strong>注意！以下全程都不要开魔法，github要你的位置的时候就允许！</strong></p>
+<p>进入<a href="https://link.zhihu.com/?target=https://education.github.com/discount_requests/pack_application">Github benefits</a></p>
+<p>选择学生优惠</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230404140341214.png" alt="image-20230404140341214"></p>
+<p>最好使用学校的edu邮箱，通过几率会增大</p>
+<p><img src="http://qiniu.jsblog.fun//img/github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81.png" alt="github学生认证"></p>
+<blockquote>
+<p>可以按我的写，我写的是</p>
+<p>I want to learn coding and try to make contribution to the community. I want to do my best to improve myself and the community.</p>
+</blockquote>
+<p>然后根据申请上传材料，尽量把链接复制到手机上，用手机拍照，不然会因为没拍照而被拒。</p>
+<p>我用的申请材料：(这些材料中尽量出现学校名称和日期，这个也是被拒的理由之一)</p>
+<blockquote>
+<ol>
+<li>学信网学籍认证，翻译成了英文。</li>
+<li>学生证。</li>
+<li>成绩单</li>
+<li>学生卡</li>
+</ol>
+</blockquote>
+<p>这些是我在10几次的申请中的使用材料。</p>
+<p>最后一次的血泪教训：</p>
+<p>修改个人资料，一定要把 user profile填完整！</p>
+<p>包括Name、Bio一定要填上自己的真实姓名和学校。</p>
+<p>如果实在不行，我还把头像换成了自己的证件照…	</p>
+<p>我最最最最没想到的，我是因为这个username多次被拒绝，在设置里改成自己的名字之后就通过了。</p>
+<p><img src="http://qiniu.jsblog.fun//img/username.png" alt="username"></p>
+<p>经过修改这个名字，我的申请就迅速通过了。</p>
+<p><img src="http://qiniu.jsblog.fun//img/Approved.png" alt="Approved"></p>
+<p>下面开始享受自己的学生福利吧！</p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>学生认证</tag>
       </tags>
   </entry>
   <entry>
@@ -624,70 +531,6 @@
       </categories>
       <tags>
         <tag>office copilot</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>创建免费企业邮箱和使用Claude-in-slack</title>
-    <url>/2023/04/13/%E5%88%9B%E5%BB%BA%E4%BC%81%E4%B8%9A%E5%85%8D%E8%B4%B9%E9%82%AE%E7%AE%B1%E5%B9%B6%E4%BD%BF%E7%94%A8Claude-in-Slack/</url>
-    <content><![CDATA[<p>创建免费企业邮箱并使用由openai团队出走核心成员创建的claude</p>
-<span id="more"></span>
-
-<h2 id="创建免费企业邮箱"><a href="#创建免费企业邮箱" class="headerlink" title="创建免费企业邮箱"></a>创建免费企业邮箱</h2><h3 id="注册邮箱"><a href="#注册邮箱" class="headerlink" title="注册邮箱"></a>注册邮箱</h3><p>进入<a href="https://ym.163.com/">网易免费企业邮箱</a>，注册邮箱，输入手机号，发送验证码</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413160552514.png" alt="image-20230413160552514"></p>
-<p>然后设置管理员账号、密码以及域名等（可选有域名和无域名）</p>
-<p>然后登录邮箱，进入邮箱管理界面：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413160752926.png" alt="image-20230413160752926"></p>
-<h3 id="DNS解析和更换域名"><a href="#DNS解析和更换域名" class="headerlink" title="DNS解析和更换域名"></a>DNS解析和更换域名</h3><p>选择组织机构管理的域名管理，新增域名（如果注册的时候填域名了是有填入的域名的）：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413160910650.png" alt="image-20230413160910650"></p>
-<p>点击这个域名，按照它的要求进行DNS解析：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413161213979.png" alt="image-20230413161213979"></p>
-<p>第三步如果设置立即生效后会重新登录，此时登录名变成了：</p>
-<p><code>username@domain.com</code></p>
-<p>重新登录管理员账户，进入到这一步，开始进行第四步部署。</p>
-<p>点击查看设置方法后，选择各项要求，我这里用的是<a href="https://console.cloud.tencent.com/cns">腾讯云</a>，所以选择了其他域名注册商:</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413161306887.png" alt="image-20230413161306887"></p>
-<p>按照这样提交之后会显示如何进行DNS解析：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413161627930.png" alt="image-20230413161627930"></p>
-<p>按照其要求，在注册商的解析平台添加DNS解析，比如说：</p>
-<blockquote>
-<p>添加MX记录：</p>
-<p>XXX.com 优先级 <strong>5 XXXX.XXXX.com.</strong></p>
-</blockquote>
-<p>就需要在解析控制台添加（由于XXX.com是根域名，所以我们添加@代表根域名）：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413162109231.png" alt="image-20230413162109231"></p>
-<p>以此类推，按照网易DNS的需求，添加DNS解析即可。</p>
-<h3 id="进入邮箱"><a href="#进入邮箱" class="headerlink" title="进入邮箱"></a>进入邮箱</h3><p>设置完成后，即可进入到<a href="https://qy.163.com/login/?from=ym">网易云邮箱</a>以用户身份登录，注册成功：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413162356275.png" alt="image-20230413162356275"></p>
-<p>这样设置后，可以发给自己的个人邮箱试试收发功能是否能使用，一般配置正确的话都是没问题的。</p>
-<h2 id="使用Claude-in-Slack"><a href="#使用Claude-in-Slack" class="headerlink" title="使用Claude-in-Slack"></a>使用Claude-in-Slack</h2><p>进入<a href="https://www.anthropic.com/">ANTHROPIC</a>的官网，选择<a href="https://www.anthropic.com/claude-in-slack">Claude-in-slack</a>，Add to Slack</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163252134.png" alt="image-20230413163252134"></p>
-<p>然后创建一个新的工作区：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163343866.png" alt="image-20230413163343866"></p>
-<p>输入刚刚创建的企业邮箱：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163411570.png" alt="image-20230413163411570"></p>
-<p>输入发送的验证码-&gt;输入名称-&gt;输入频道名</p>
-<p>进入频道，选择浏览：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163557649.png" alt="image-20230413163557649"></p>
-<p>点击应用：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163625260.png" alt="image-20230413163625260"></p>
-<p>搜索<code>Claude</code>，然后将其添加到自己的工作区中，在工作区的应用栏即可找到：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163726917.png" alt="image-20230413163726917"></p>
-<p>第一次使用时会让你同意它的政策，点击Agree即可，下面就可以开始正式的对话了：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163845886.png" alt="image-20230413163845886"></p>
-<p>享受Claude吧！据说该模型是Openai的核心成员出走后创建的新公司的模型。</p>
-<h2 id="申请Claude"><a href="#申请Claude" class="headerlink" title="申请Claude"></a>申请Claude</h2><p>既然已经创建了企业邮箱，拿都拿到了，本来Claude就要求企业邮箱，当然要拿来申请一下Claude试试了，万一通过了呢</p>
-<p>进入<a href="https://www.anthropic.com/product">Claude申请界面</a>：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413193226389.png" alt="image-20230413193226389"></p>
-<p>然后按照它的问题填写信息，填写的越多通过概率越高（大概，至少我目前还没通过）</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413193348332.png" alt="image-20230413193348332"></p>
-<p>都填完之后，最后Submit即可！</p>
-]]></content>
-      <categories>
-        <category>Ai</category>
-      </categories>
-      <tags>
-        <tag>Claude</tag>
-        <tag>企业邮箱</tag>
       </tags>
   </entry>
   <entry>
@@ -913,6 +756,29 @@
 
 <p>长这个样子（就是这个彩带，刷新一次变一次）：</p>
 <p><img src="https://qiniu.jsblog.fun//img/image-20230417213621997.png" alt="image-20230417213621997"></p>
+<h3 id="增加点击特效"><a href="#增加点击特效" class="headerlink" title="增加点击特效"></a>增加点击特效</h3><p>转自这位<a href="https://nuosferatu.github.io/2020/06/12/NexT-Click-Effect/">大佬</a>和<a href="http://yearito.cn/posts/hexo-theme-beautify.html">这位</a></p>
+<ol>
+<li><p>下载 JavaScript 脚本（<a href="https://aliyun-oss-pic-bucket.oss-cn-beijing.aliyuncs.com/file/fireworks.js">这里</a>），放在主题文件夹下 themes\next\source\js\cursor\ 下，如果没有 cursor 这个目录，手动创建一下。</p>
+<p>再创建一个js脚本，命名为<code>cherry.js</code>，内容是：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">(<span class="keyword">function</span> <span class="title function_">cherry</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> possibleColors = [<span class="string">&quot;#D61C59&quot;</span>, <span class="string">&quot;#E7D84B&quot;</span>, <span class="string">&quot;#1B8798&quot;</span>]</span><br><span class="line">  <span class="keyword">var</span> width = <span class="variable language_">window</span>.<span class="property">innerWidth</span>;</span><br><span class="line">  <span class="keyword">var</span> height = <span class="variable language_">window</span>.<span class="property">innerHeight</span>;</span><br><span class="line">  <span class="keyword">var</span> cursor = &#123;<span class="attr">x</span>: width/<span class="number">2</span>, <span class="attr">y</span>: width/<span class="number">2</span>&#125;;</span><br><span class="line">  <span class="keyword">var</span> particles = [];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">init</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title function_">bindEvents</span>();</span><br><span class="line">    <span class="title function_">loop</span>();</span><br><span class="line">  &#125;  </span><br><span class="line">  <span class="comment">// Bind events that are needed</span></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">bindEvents</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mousemove&#x27;</span>, onMouseMove);</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;touchmove&#x27;</span>, onTouchMove);</span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;touchstart&#x27;</span>, onTouchMove);</span><br><span class="line">    </span><br><span class="line">    <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;resize&#x27;</span>, onWindowResize);</span><br><span class="line">  &#125;  </span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">onWindowResize</span>(<span class="params">e</span>) &#123;</span><br><span class="line">    width = <span class="variable language_">window</span>.<span class="property">innerWidth</span>;</span><br><span class="line">    height = <span class="variable language_">window</span>.<span class="property">innerHeight</span>;</span><br><span class="line">  &#125; </span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">onTouchMove</span>(<span class="params">e</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span>( e.<span class="property">touches</span>.<span class="property">length</span> &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">      <span class="keyword">for</span>( <span class="keyword">var</span> i = <span class="number">0</span>; i &lt; e.<span class="property">touches</span>.<span class="property">length</span>; i++ ) &#123;</span><br><span class="line">        <span class="title function_">addParticle</span>( e.<span class="property">touches</span>[i].<span class="property">clientX</span>, e.<span class="property">touches</span>[i].<span class="property">clientY</span>, possibleColors[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>()*possibleColors.<span class="property">length</span>)]);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">onMouseMove</span>(<span class="params">e</span>) &#123;    </span><br><span class="line">    cursor.<span class="property">x</span> = e.<span class="property">clientX</span>;</span><br><span class="line">    cursor.<span class="property">y</span> = e.<span class="property">clientY</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="title function_">addParticle</span>( cursor.<span class="property">x</span>, cursor.<span class="property">y</span>, possibleColors[<span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Math</span>.<span class="title function_">random</span>()*possibleColors.<span class="property">length</span>)]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">addParticle</span>(<span class="params">x, y, color</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> particle = <span class="keyword">new</span> <span class="title class_">Particle</span>();</span><br><span class="line">    particle.<span class="title function_">init</span>(x, y, color);</span><br><span class="line">    particles.<span class="title function_">push</span>(particle);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">updateParticles</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">for</span>( <span class="keyword">var</span> i = <span class="number">0</span>; i &lt; particles.<span class="property">length</span>; i++ ) &#123;</span><br><span class="line">      particles[i].<span class="title function_">update</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>( <span class="keyword">var</span> i = particles.<span class="property">length</span> -<span class="number">1</span>; i &gt;= <span class="number">0</span>; i-- ) &#123;</span><br><span class="line">      <span class="keyword">if</span>( particles[i].<span class="property">lifeSpan</span> &lt; <span class="number">0</span> ) &#123;</span><br><span class="line">        particles[i].<span class="title function_">die</span>();</span><br><span class="line">        particles.<span class="title function_">splice</span>(i, <span class="number">1</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">loop</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title function_">requestAnimationFrame</span>(loop);</span><br><span class="line">    <span class="title function_">updateParticles</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">Particle</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">character</span> = <span class="string">&quot;*&quot;</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">lifeSpan</span> = <span class="number">120</span>; <span class="comment">//ms</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">initialStyles</span> =&#123;</span><br><span class="line">      <span class="string">&quot;position&quot;</span>: <span class="string">&quot;fixed&quot;</span>,</span><br><span class="line">      <span class="string">&quot;top&quot;</span>: <span class="string">&quot;0&quot;</span>, <span class="comment">//必须加</span></span><br><span class="line">      <span class="string">&quot;display&quot;</span>: <span class="string">&quot;block&quot;</span>,</span><br><span class="line">      <span class="string">&quot;pointerEvents&quot;</span>: <span class="string">&quot;none&quot;</span>,</span><br><span class="line">      <span class="string">&quot;z-index&quot;</span>: <span class="string">&quot;10000000&quot;</span>,</span><br><span class="line">      <span class="string">&quot;fontSize&quot;</span>: <span class="string">&quot;20px&quot;</span>,</span><br><span class="line">      <span class="string">&quot;will-change&quot;</span>: <span class="string">&quot;transform&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">init</span> = <span class="keyword">function</span>(<span class="params">x, y, color</span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">velocity</span> = &#123;</span><br><span class="line">        <span class="attr">x</span>:  (<span class="title class_">Math</span>.<span class="title function_">random</span>() &lt; <span class="number">0.5</span> ? -<span class="number">1</span> : <span class="number">1</span>) * (<span class="title class_">Math</span>.<span class="title function_">random</span>() / <span class="number">2</span>),</span><br><span class="line">        <span class="attr">y</span>: <span class="number">1</span></span><br><span class="line">      &#125;;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">position</span> = &#123;<span class="attr">x</span>: x - <span class="number">10</span>, <span class="attr">y</span>: y - <span class="number">20</span>&#125;;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">initialStyles</span>.<span class="property">color</span> = color;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(color);</span><br><span class="line"></span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">element</span> = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;span&#x27;</span>);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">element</span>.<span class="property">innerHTML</span> = <span class="variable language_">this</span>.<span class="property">character</span>;</span><br><span class="line">      <span class="title function_">applyProperties</span>(<span class="variable language_">this</span>.<span class="property">element</span>, <span class="variable language_">this</span>.<span class="property">initialStyles</span>);</span><br><span class="line">      <span class="variable language_">this</span>.<span class="title function_">update</span>();</span><br><span class="line">      </span><br><span class="line">      <span class="variable language_">document</span>.<span class="property">body</span>.<span class="title function_">appendChild</span>(<span class="variable language_">this</span>.<span class="property">element</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">update</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">position</span>.<span class="property">x</span> += <span class="variable language_">this</span>.<span class="property">velocity</span>.<span class="property">x</span>;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">position</span>.<span class="property">y</span> += <span class="variable language_">this</span>.<span class="property">velocity</span>.<span class="property">y</span>;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">lifeSpan</span>--;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">element</span>.<span class="property">style</span>.<span class="property">transform</span> = <span class="string">&quot;translate3d(&quot;</span> + <span class="variable language_">this</span>.<span class="property">position</span>.<span class="property">x</span> + <span class="string">&quot;px,&quot;</span> + <span class="variable language_">this</span>.<span class="property">position</span>.<span class="property">y</span> + <span class="string">&quot;px,0) scale(&quot;</span> + (<span class="variable language_">this</span>.<span class="property">lifeSpan</span> / <span class="number">120</span>) + <span class="string">&quot;)&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">die</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">element</span>.<span class="property">parentNode</span>.<span class="title function_">removeChild</span>(<span class="variable language_">this</span>.<span class="property">element</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">applyProperties</span>(<span class="params"> target, properties </span>) &#123;</span><br><span class="line">    <span class="keyword">for</span>( <span class="keyword">var</span> key <span class="keyword">in</span> properties ) &#123;</span><br><span class="line">      target.<span class="property">style</span>[ key ] = properties[ key ];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">init</span>();</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后在主题自定义布局文件 themes\next\layout_custom\custom.swig 中添加如下内容（不管是目录还是文件，没有就创建）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;# 鼠标点击特效 #&#125;</span><br><span class="line">&#123;% if theme.cursor_effect == &quot;fireworks&quot; %&#125;</span><br><span class="line">  &lt;script async src=&quot;/js/cursor/fireworks.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&#123;% elseif theme.cursor_effect == &quot;cherry&quot; %&#125;</span><br><span class="line">  &lt;script src=&quot;/js/cursor/cherry.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&#123;% endif %&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>\layout&#96;下找到_layout.swig，添加下面代码</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">&#123;% include &#x27;_custom/custom.swig&#x27; %&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后在<code>themes\next\\_config.yml</code>中添加下列内容：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">cursor_effect:</span> <span class="string">cherry/fireworks</span></span><br></pre></td></tr></table></figure>
+
+<p>看看长什么样子</p>
+<p>Cherry：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230420220341594.png" alt="image-20230420220341594"></p>
+<p>fireworks：</p>
+<p>点击特效，点击出现烟花</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230420220422832.png" alt="image-20230420220422832"></p>
+</li>
+</ol>
 <h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><h3 id="YAMLException"><a href="#YAMLException" class="headerlink" title="YAMLException"></a>YAMLException</h3><p>今天hexo出现了这么个问题：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">YAMLException: can not <span class="built_in">read</span> a block mapping entry; a multiline key may not be an implicit key at line (x,x)</span><br></pre></td></tr></table></figure>
 
@@ -950,6 +816,163 @@
         <tag>博客美化</tag>
         <tag>Hexo</tag>
         <tag>Next</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Windows server+v2ray+tls+wb+nginx代理服务器搭建</title>
+    <url>/2023/04/09/windows%20server+TLS+websocket+nginx/</url>
+    <content><![CDATA[<p>使用windows server 2012 完成v2ray+tls+wb+nginx的搭建</p>
+<span id="more"></span>
+
+<h2 id="Windows-server-v2ray-tls-wb-nginx"><a href="#Windows-server-v2ray-tls-wb-nginx" class="headerlink" title="Windows server+v2ray+tls+wb+nginx"></a>Windows server+v2ray+tls+wb+nginx</h2><p>下面尝试一下用windows server套tls和nginx反向代理，其实很简单，如果Linux的学会了之后windows图形界面就很简单了。</p>
+<p>这个是我之前用<a href="http://jsblog.fun/2023/04/08/V2ray+TLS+websocket+cdn%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%90%AD%E5%BB%BA/">Linux构建流程</a>，整篇博客内容均来自<a href="https://bulianglin.com/403.php">不良林</a>，更详细的步骤可以看不良林的视频。</p>
+<p>下面正式开始：</p>
+<h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><ul>
+<li>一个解析好的域名，指向自己的windows服务器，国内国外都可以。</li>
+<li><a href="https://www.win-acme.com/">win-amch</a>：用于windows创建证书,直接download下载就可以。</li>
+<li><a href="https://nginx.org/en/download.html">Nginx</a>：web server，用于创建网页，选择stable version下载。</li>
+<li>一台windows server服务器</li>
+</ul>
+<h3 id="域名解析"><a href="#域名解析" class="headerlink" title="域名解析"></a>域名解析</h3><p>进入购买域名的商家控制台，我这里用的是腾讯云：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409182730326.png" alt="image-20230409182730326"></p>
+<p>在控制台中加入两条A记录，指向自己的服务器IP，完成解析。</p>
+<p>解析完成后可以在cmd命令行中ping一下自己的<strong>域名</strong>，看看主机地址是不是自己指向的：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409182946855.png" alt="image-20230409182946855"></p>
+<p>有没有回复无所谓，只需要证明A记录生效了就可以。</p>
+<h3 id="开启网站端口"><a href="#开启网站端口" class="headerlink" title="开启网站端口"></a>开启网站端口</h3><p>因为搭建一个网站需要用到服务器的80和443端口，所以我们在正式部署之前先开放一下这两个端口。</p>
+<p>我windws服务器所使用的系统是<code>windows server 2012</code>，通过<code>server manager</code>开放端口。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409183628824.png" alt="image-20230409183628824"></p>
+<p>添加进站规则：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409183822332.png" alt="image-20230409183822332"></p>
+<p>然后选择<code>port</code>:</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409183851700.png" alt="image-20230409183851700"></p>
+<p>输入端口：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409183946957.png" alt="image-20230409183946957"></p>
+<p>然后下一步下一步，输入这项规则的名称，其余保持默认就可以了，设置完成之后可以发现它已经在进展规则里了：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409184050861.png" alt="image-20230409184050861"></p>
+<p>然后我们可以进行下一步了。</p>
+<h3 id="注册ECC证书"><a href="#注册ECC证书" class="headerlink" title="注册ECC证书"></a>注册ECC证书</h3><p>以下内容参考自<a href="https://bulianglin.com/403.php">不良林</a>的视频：</p>
+<p>对于TLS来说，证书是必不可少的。</p>
+<p>我们使用win-acme来注册证书，从网站下载后，解压，打开wacs：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409184300902.png" alt="image-20230409184300902"></p>
+<p>然后按照以下步骤注册证书：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409193350929.png" alt="image-20230409193350929"></p>
+<p>选择M，表示使用完全选项。</p>
+<p>然后Enter，按默认的走。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409193706311.png" alt="image-20230409193706311"></p>
+<p>这里输入你的域名，然后Enter确认一次。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409193706311.png"></p>
+<p>这里选择1，表示http证书</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409193827086.png" alt="image-20230409193827086"></p>
+<p>这里输入网站的根地址，就是Nginx储存html的地址</p>
+<p>我的地址是这样的<code>C:\Users\XXX\Desktop\nginx-1.22.1\nginx-1.22.1\html</code></p>
+<p>然后Enter使用默认配置</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409194203769.png" alt="image-20230409194203769"></p>
+<p>密钥的类型这里我们选择1：ECCkey</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409194253689.png" alt="image-20230409194253689"></p>
+<p>证书的格式我们选择2：Nginx配置所用的</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409194350730.png" alt="image-20230409194350730"></p>
+<p>密钥文件保存在哪里，我们选择在V2ray的目录：<code>C:\Users\XXX\Desktop\v2ray-windows-64</code></p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409194446784.png" alt="image-20230409194446784"></p>
+<p>私钥的密码，我们选择1，不设置密码。</p>
+<p>剩下的就全部Enter选择默认就可以了。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409194550065.png" alt="image-20230409194550065"></p>
+<p>验证通过（<code>valid</code>）后即可在保存的路径找到pem文件，我们只需要保存以下两个，剩下的删掉就可以：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409193238643.png" alt="image-20230409193238643"></p>
+<h3 id="配置V2ray和Nginx"><a href="#配置V2ray和Nginx" class="headerlink" title="配置V2ray和Nginx"></a>配置V2ray和Nginx</h3><blockquote>
+<p>以下配置文件均从<a href="https://bulianglin.com/403.php">不良林</a>处copy过来</p>
+</blockquote>
+<p>Nginx的使用方法：</p>
+<p><code>双击</code>即可启动，要想修改配置文件，就找到Nginx主目录下的&#x2F;conf&#x2F;nginx.conf中进行修改。</p>
+<p>先启动Nginx，在浏览器地址栏输入自己的IP，应该能看到Nginx的欢迎界面：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409194906023.png" alt="image-20230409194906023"></p>
+<p>然后修改V2ray的配置文件：&#x2F;v2ray-windows-64&#x2F;config.json</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;inbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;port&quot;</span>: 8388, <span class="comment">#准备开放的端口</span></span><br><span class="line">      <span class="string">&quot;listen&quot;</span>:<span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">      <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;vmess&quot;</span>,</span><br><span class="line">      <span class="string">&quot;settings&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;clients&quot;</span>: [</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="string">&quot;id&quot;</span>: <span class="string">&quot;c98ee1c3-5ea3-4fbf-a458-4c8393149f2a&quot;</span>, <span class="comment">#自己生成的id</span></span><br><span class="line">            <span class="string">&quot;alterId&quot;</span>: 0</span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">&quot;streamSettings&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;network&quot;</span>: <span class="string">&quot;ws&quot;</span>,  <span class="comment">#修改协议为ws</span></span><br><span class="line">        <span class="string">&quot;wsSettings&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;path&quot;</span>: <span class="string">&quot;/ray&quot;</span>  <span class="comment">#配置的路径</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;outbounds&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">&quot;protocol&quot;</span>: <span class="string">&quot;freedom&quot;</span>,</span><br><span class="line">      <span class="string">&quot;settings&quot;</span>: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改Nginx：&#x2F;Nginx&#x2F;conf&#x2F;nginx.conf</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">worker_processes  1;</span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    server &#123;</span><br><span class="line">       listen 443 ssl http2;</span><br><span class="line"></span><br><span class="line">       server_name win.buliang0.tk;  <span class="comment">#你的域名</span></span><br><span class="line">       ssl_certificate       C:\\Users\\Administrator\\Desktop\\v2ray-windows-64\\cer.pem;  <span class="comment">#证书</span></span><br><span class="line">       ssl_certificate_key   C:\\Users\\Administrator\\Desktop\\v2ray-windows-64\\key.pem; <span class="comment">#私钥</span></span><br><span class="line">       </span><br><span class="line">       ssl_protocols         TLSv1.2 TLSv1.3;</span><br><span class="line">       ssl_ciphers           ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;</span><br><span class="line">       ssl_prefer_server_ciphers off;</span><br><span class="line"></span><br><span class="line">       location / &#123;</span><br><span class="line">           proxy_pass https://www.bing.com; <span class="comment">#伪装网址</span></span><br><span class="line">           proxy_ssl_server_name on;</span><br><span class="line">           proxy_redirect off;</span><br><span class="line">           sub_filter_once off;</span><br><span class="line">           sub_filter <span class="string">&quot;www.bing.com&quot;</span> <span class="variable">$server_name</span>;</span><br><span class="line">           proxy_set_header Host <span class="string">&quot;www.bing.com&quot;</span>;</span><br><span class="line">           proxy_set_header Referer <span class="variable">$http_referer</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header User-Agent <span class="variable">$http_user_agent</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-Proto https;</span><br><span class="line">           proxy_set_header Accept-Encoding <span class="string">&quot;&quot;</span>;</span><br><span class="line">           proxy_set_header Accept-Language <span class="string">&quot;zh-CN&quot;</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       location /ray &#123;</span><br><span class="line">           proxy_redirect off;</span><br><span class="line">           proxy_pass http://127.0.0.1:8388; <span class="comment">#v2ray监听端口</span></span><br><span class="line">           proxy_http_version 1.1;</span><br><span class="line">           proxy_set_header Upgrade <span class="variable">$http_upgrade</span>;</span><br><span class="line">           proxy_set_header Connection <span class="string">&quot;upgrade&quot;</span>;</span><br><span class="line">           proxy_set_header Host <span class="variable">$host</span>;</span><br><span class="line">           proxy_set_header X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">           proxy_set_header X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">        listen 80;</span><br><span class="line"></span><br><span class="line">        location /.well-known/ &#123;</span><br><span class="line">               root   html;</span><br><span class="line">            &#125;</span><br><span class="line">        location / &#123;</span><br><span class="line">            rewrite ^(.*)$ https://$host<span class="variable">$1</span> permanent;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改好后，重新启动Nginx和V2ray</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#V2ray 先关闭原来的黑窗口命令行，将V2ray主程序拖进cmd，自动显示这个程序</span></span><br><span class="line">$ V2ray.exe run</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#Nginx找到主目录，将Nginx主程序拖进cmd</span></span><br><span class="line">$ nginx.exe -s reload</span><br></pre></td></tr></table></figure>
+
+<p>然后在V2rayN主程序中设置一下：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230409195817945.png" alt="image-20230409195817945"></p>
+<p>配置好后，Tcpping一下能通后，进行真连接延迟测试，都能通过的话即可正常使用代理服务器！</p>
+<p>最后老样子，测试一下服务器的安全性：<a href="https://www.ssllabs.com/ssltest/index.html">Qualys SSL Labs’s SSL Server Test</a></p>
+<p><img src="http://qiniu.jsblog.fun//img/A.png" alt="A"></p>
+<p>测试结果为A+，情理之中！</p>
+]]></content>
+      <categories>
+        <category>Virtual Machine</category>
+      </categories>
+      <tags>
+        <tag>VPS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>创建免费企业邮箱和使用Claude-in-slack</title>
+    <url>/2023/04/13/%E5%88%9B%E5%BB%BA%E4%BC%81%E4%B8%9A%E5%85%8D%E8%B4%B9%E9%82%AE%E7%AE%B1%E5%B9%B6%E4%BD%BF%E7%94%A8Claude-in-Slack/</url>
+    <content><![CDATA[<p>创建免费企业邮箱并使用由openai团队出走核心成员创建的claude</p>
+<span id="more"></span>
+
+<h2 id="创建免费企业邮箱"><a href="#创建免费企业邮箱" class="headerlink" title="创建免费企业邮箱"></a>创建免费企业邮箱</h2><h3 id="注册邮箱"><a href="#注册邮箱" class="headerlink" title="注册邮箱"></a>注册邮箱</h3><p>进入<a href="https://ym.163.com/">网易免费企业邮箱</a>，注册邮箱，输入手机号，发送验证码</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413160552514.png" alt="image-20230413160552514"></p>
+<p>然后设置管理员账号、密码以及域名等（可选有域名和无域名）</p>
+<p>然后登录邮箱，进入邮箱管理界面：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413160752926.png" alt="image-20230413160752926"></p>
+<h3 id="DNS解析和更换域名"><a href="#DNS解析和更换域名" class="headerlink" title="DNS解析和更换域名"></a>DNS解析和更换域名</h3><p>选择组织机构管理的域名管理，新增域名（如果注册的时候填域名了是有填入的域名的）：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413160910650.png" alt="image-20230413160910650"></p>
+<p>点击这个域名，按照它的要求进行DNS解析：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413161213979.png" alt="image-20230413161213979"></p>
+<p>第三步如果设置立即生效后会重新登录，此时登录名变成了：</p>
+<p><code>username@domain.com</code></p>
+<p>重新登录管理员账户，进入到这一步，开始进行第四步部署。</p>
+<p>点击查看设置方法后，选择各项要求，我这里用的是<a href="https://console.cloud.tencent.com/cns">腾讯云</a>，所以选择了其他域名注册商:</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413161306887.png" alt="image-20230413161306887"></p>
+<p>按照这样提交之后会显示如何进行DNS解析：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413161627930.png" alt="image-20230413161627930"></p>
+<p>按照其要求，在注册商的解析平台添加DNS解析，比如说：</p>
+<blockquote>
+<p>添加MX记录：</p>
+<p>XXX.com 优先级 <strong>5 XXXX.XXXX.com.</strong></p>
+</blockquote>
+<p>就需要在解析控制台添加（由于XXX.com是根域名，所以我们添加@代表根域名）：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413162109231.png" alt="image-20230413162109231"></p>
+<p>以此类推，按照网易DNS的需求，添加DNS解析即可。</p>
+<h3 id="进入邮箱"><a href="#进入邮箱" class="headerlink" title="进入邮箱"></a>进入邮箱</h3><p>设置完成后，即可进入到<a href="https://qy.163.com/login/?from=ym">网易云邮箱</a>以用户身份登录，注册成功：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413162356275.png" alt="image-20230413162356275"></p>
+<p>这样设置后，可以发给自己的个人邮箱试试收发功能是否能使用，一般配置正确的话都是没问题的。</p>
+<h2 id="使用Claude-in-Slack"><a href="#使用Claude-in-Slack" class="headerlink" title="使用Claude-in-Slack"></a>使用Claude-in-Slack</h2><p>进入<a href="https://www.anthropic.com/">ANTHROPIC</a>的官网，选择<a href="https://www.anthropic.com/claude-in-slack">Claude-in-slack</a>，Add to Slack</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163252134.png" alt="image-20230413163252134"></p>
+<p>然后创建一个新的工作区：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163343866.png" alt="image-20230413163343866"></p>
+<p>输入刚刚创建的企业邮箱：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163411570.png" alt="image-20230413163411570"></p>
+<p>输入发送的验证码-&gt;输入名称-&gt;输入频道名</p>
+<p>进入频道，选择浏览：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163557649.png" alt="image-20230413163557649"></p>
+<p>点击应用：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163625260.png" alt="image-20230413163625260"></p>
+<p>搜索<code>Claude</code>，然后将其添加到自己的工作区中，在工作区的应用栏即可找到：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163726917.png" alt="image-20230413163726917"></p>
+<p>第一次使用时会让你同意它的政策，点击Agree即可，下面就可以开始正式的对话了：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163845886.png" alt="image-20230413163845886"></p>
+<p>享受Claude吧！据说该模型是Openai的核心成员出走后创建的新公司的模型。</p>
+<h2 id="申请Claude"><a href="#申请Claude" class="headerlink" title="申请Claude"></a>申请Claude</h2><p>既然已经创建了企业邮箱，拿都拿到了，本来Claude就要求企业邮箱，当然要拿来申请一下Claude试试了，万一通过了呢</p>
+<p>进入<a href="https://www.anthropic.com/product">Claude申请界面</a>：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413193226389.png" alt="image-20230413193226389"></p>
+<p>然后按照它的问题填写信息，填写的越多通过概率越高（大概，至少我目前还没通过）</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413193348332.png" alt="image-20230413193348332"></p>
+<p>都填完之后，最后Submit即可！</p>
+]]></content>
+      <categories>
+        <category>Ai</category>
+      </categories>
+      <tags>
+        <tag>Claude</tag>
+        <tag>企业邮箱</tag>
       </tags>
   </entry>
   <entry>
@@ -999,39 +1022,6 @@
       </categories>
       <tags>
         <tag>阿里云盘</tag>
-        <tag>Github</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>快速访问github</title>
-    <url>/2023/04/15/%E6%97%A0%E9%AD%94%E6%B3%95%E5%BF%AB%E9%80%9F%E8%AE%BF%E9%97%AEgithub/</url>
-    <content><![CDATA[<p>使用Github开源项目加快访问Github</p>
-<span id="more"></span>
-
-<p>作为一个小趴菜，每天要靠github上的大神项目才能过活</p>
-<p>但是访问github的速度竟然要靠运气！每天不是丢包就是在丢包的路上！</p>
-<p>这怎么能忍！</p>
-<p>于是我去搜索了github，看看怎么加速访问github，没想到还真被我找到了：<a href="https://github.com/dotnetcore/FastGithub">Fastgithub</a></p>
-<h2 id="Fastgithub的安装和使用"><a href="#Fastgithub的安装和使用" class="headerlink" title="Fastgithub的安装和使用"></a>Fastgithub的安装和使用</h2><p>进入github中<a href="https://github.com/dotnetcore/FastGithub">Fastgithub库的地址</a></p>
-<p>选择release，最新版的是<a href="https://github.com/dotnetcore/FastGithub/releases/tag/2.1.4">2.1.4</a></p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230415135639988.png"></p>
-<p>我的电脑是windows系统，所以我们选择windows版本：</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230415135908744.png" alt="image-20230415135908744"></p>
-<p>下载到电脑上后，解压后得到以下文件：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230415190658792.png" alt="image-20230415190658792"></p>
-<p>点击运行<code>FastGithub.UI.exe</code>，即可进入图形化界面，可视化界面</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230415190819030.png" alt="image-20230415190819030"></p>
-<p>缺点是需要一直挂着，但是FastGithub提供了将FastGithub程序以服务方式进行的方式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#开启fastgithub服务</span></span><br><span class="line">fastgithub.exe start</span><br><span class="line"><span class="comment">#关闭fastgithub服务</span></span><br><span class="line">fastgithub.exe stop</span><br></pre></td></tr></table></figure>
-
-<p>开启后，可以在任务管理器中发现后台运行的fastgithub，重启后依然有效，这样就实现了<strong>无感直连Github</strong>的方式啦</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230415190402475.png" alt="image-20230415190402475"></p>
-<p>以上就是Fastgithub的使用，个人使用下来目前还蛮舒服的，推荐Windows用户使用！</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
         <tag>Github</tag>
       </tags>
   </entry>
@@ -1111,6 +1101,39 @@
       </categories>
       <tags>
         <tag>Ai绘图</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>快速访问github</title>
+    <url>/2023/04/15/%E6%97%A0%E9%AD%94%E6%B3%95%E5%BF%AB%E9%80%9F%E8%AE%BF%E9%97%AEgithub/</url>
+    <content><![CDATA[<p>使用Github开源项目加快访问Github</p>
+<span id="more"></span>
+
+<p>作为一个小趴菜，每天要靠github上的大神项目才能过活</p>
+<p>但是访问github的速度竟然要靠运气！每天不是丢包就是在丢包的路上！</p>
+<p>这怎么能忍！</p>
+<p>于是我去搜索了github，看看怎么加速访问github，没想到还真被我找到了：<a href="https://github.com/dotnetcore/FastGithub">Fastgithub</a></p>
+<h2 id="Fastgithub的安装和使用"><a href="#Fastgithub的安装和使用" class="headerlink" title="Fastgithub的安装和使用"></a>Fastgithub的安装和使用</h2><p>进入github中<a href="https://github.com/dotnetcore/FastGithub">Fastgithub库的地址</a></p>
+<p>选择release，最新版的是<a href="https://github.com/dotnetcore/FastGithub/releases/tag/2.1.4">2.1.4</a></p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230415135639988.png"></p>
+<p>我的电脑是windows系统，所以我们选择windows版本：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230415135908744.png" alt="image-20230415135908744"></p>
+<p>下载到电脑上后，解压后得到以下文件：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230415190658792.png" alt="image-20230415190658792"></p>
+<p>点击运行<code>FastGithub.UI.exe</code>，即可进入图形化界面，可视化界面</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230415190819030.png" alt="image-20230415190819030"></p>
+<p>缺点是需要一直挂着，但是FastGithub提供了将FastGithub程序以服务方式进行的方式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#开启fastgithub服务</span></span><br><span class="line">fastgithub.exe start</span><br><span class="line"><span class="comment">#关闭fastgithub服务</span></span><br><span class="line">fastgithub.exe stop</span><br></pre></td></tr></table></figure>
+
+<p>开启后，可以在任务管理器中发现后台运行的fastgithub，重启后依然有效，这样就实现了<strong>无感直连Github</strong>的方式啦</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230415190402475.png" alt="image-20230415190402475"></p>
+<p>以上就是Fastgithub的使用，个人使用下来目前还蛮舒服的，推荐Windows用户使用！</p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
       </tags>
   </entry>
 </search>

@@ -1,6 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Cloudflare自选ip</title>
+    <url>/2023/05/18/Cloudflare%E8%87%AA%E9%80%89ip/</url>
+    <content><![CDATA[<p>使用自选ip实现cdn加速</p>
+<span id="more"></span>
+
+<h2 id="事前准备"><a href="#事前准备" class="headerlink" title="事前准备"></a>事前准备</h2><p>1个解析好的Cloudflare域名</p>
+<p>第三方注册商 这里用的是<a href="https://www.mnn.tw/panel/user/index">梦牛网络</a></p>
+<p>解析地址：gn.cfsaas.ltd</p>
+<p><a href="https://www.cloudflare-cn.com/?ref=dhs.zsyts.cn">Cloudflare中文网</a>账号</p>
+<h2 id="更改DNS"><a href="#更改DNS" class="headerlink" title="更改DNS"></a>更改DNS</h2><p>Cloudflare登录到账号后，找到已经注册好的域名：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230518084516549.png" alt="image-20230518084516549"></p>
+<p>记住域名地址<code>domin.com</code></p>
+<p>然后我们进入梦牛网络的控制台，绑定Cloudflare账号</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230518105231285.png" alt="image-20230518105231285"></p>
+<p>进入域名列表-&gt;进行域名解析，解析到自己的主机地址</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230518105809339.png" alt="image-20230518105809339"></p>
+<p>进入自己的域名注册商（我这里是腾讯云），将DNS改回自己的注册商。</p>
+<p>然后添加CNAME记录，指向解析地址即可。</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230518110104333.png" alt="image-20230518110104333"></p>
+<p>等待地址刷新后，即可正常访问，测一下速度大概在60ms左右，很不错了。</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230518110243912.png" alt="image-20230518110243912"></p>
+<h3 id="刷新本地缓存DNS"><a href="#刷新本地缓存DNS" class="headerlink" title="刷新本地缓存DNS"></a>刷新本地缓存DNS</h3><p>如果长时间还没刷新出来，可以自己手动刷新一下<code>本地的缓存</code></p>
+<p>在cmd中运行以下命令刷新DNS</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">ipconfig /flushdns</span><br></pre></td></tr></table></figure>
+
+
+
+<p>本文依据：<a href="https://blog.csdn.net/qq_17754023/article/details/129057864">https://blog.csdn.net/qq_17754023/article/details/129057864</a></p>
+]]></content>
+      <categories>
+        <category>VPS</category>
+      </categories>
+      <tags>
+        <tag>Cloudflare</tag>
+        <tag>DNS</tag>
+        <tag>IP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Azure微软云(Azure for students)虚拟机创建</title>
+    <url>/2023/04/08/Azure%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</url>
+    <content><![CDATA[<p>使用Azure for students学生订阅创建虚拟机，避免踩坑。</p>
+<span id="more"></span>
+
+<h3 id="创建虚拟机"><a href="#创建虚拟机" class="headerlink" title="创建虚拟机"></a>创建虚拟机</h3><p>这里有几个坑，血泪教训，请一定要注意，不注意就会扣免费的100刀</p>
+<p>想看看自己的余额还有多少，可以进入<a href="https://www.microsoftazuresponsorships.com/Balance">Azure余额查询</a>然后点击Usage，就可以看自己扣钱的是哪些方面，</p>
+<p>首先，需要注意的是，如果从免费服务里创建两个虚拟机，地区会被限定，但是会提示免费750h：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408145948988.png" alt="image-20230408145948988"></p>
+<p>点击创建后会显示这个</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408150028958.png" alt="image-20230408150028958"></p>
+<p>区域会显示只有两个可以选择，而且这两个据我观察是延迟比较高的地区。</p>
+<p>想看看自己延迟最低的地区，可以利用这个<a href="https://www.azurespeed.com/Azure/Latency">Azure测速网站</a></p>
+<p>延迟高的地区虚拟机不好用，所以我们选择自己创建延迟低地区的资源</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408151015047.png" alt="image-20230408151015047"></p>
+<p>创建虚拟机</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408151049003.png" alt="image-20230408151049003"></p>
+<h4 id="第一个坑：修改可用性选项"><a href="#第一个坑：修改可用性选项" class="headerlink" title="第一个坑：修改可用性选项"></a>第一个坑：修改可用性选项</h4><p>由于Azure的静态IP地址也要收费的，如果不修改可用性选项就只能使用静态IP，这个是要付费的。</p>
+<p>Azure for students提供的是免费动态ip，所以我们要改成动态IP，而动态IP对可用性选项有要求。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408151253855.png" alt="image-20230408151253855"></p>
+<p>我们选择无需基础结构冗余</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408164710179.png" alt="image-20230408164710179"></p>
+<p>选择这个选项后才能选择动态IP。</p>
+<p>另外还有一点，就是大小必须选择B1s，不然也不会免费的。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408164846616.png" alt="image-20230408164846616"></p>
+<p>然后填自己的管理员账户，登录方式等。</p>
+<p>入站端口我选择的是SSH(22)，ssh是我最熟悉的登陆方式。</p>
+<p>然后进行下一步，查看磁盘。</p>
+<h4 id="第二个坑，磁盘大小必须为64G"><a href="#第二个坑，磁盘大小必须为64G" class="headerlink" title="第二个坑，磁盘大小必须为64G"></a>第二个坑，磁盘大小必须为64G</h4><p>进入磁盘选项后，一定要将磁盘重设为64GB，不然使用磁盘也会产生费用。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408165122802.png" alt="image-20230408165122802"></p>
+<p>然后进入网络选项卡，新建IP</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408165321524.png" alt="image-20230408165321524"></p>
+<p>将IP设置为动态IP</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408165405728.png" alt="image-20230408165405728"></p>
+<p>点击确定，查看并创建虚拟机。</p>
+<p>至此，虚拟机算是创建完了。</p>
+<h4 id="第三个坑，不要使用任何额外服务"><a href="#第三个坑，不要使用任何额外服务" class="headerlink" title="第三个坑，不要使用任何额外服务"></a>第三个坑，不要使用任何额外服务</h4><p>创建完成后，去所有资源选项卡看一下自己的所有资源，一定要把网络监视器给删除掉。这也是需要付费的，虽然价格不高。</p>
+<p>这些ID一般是NetworkerWatcher_ID，进入到NetworkerWatcherRG资源组，选中，点击右上角的删除，删除网络监视器，拒绝付费。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408165704167.png" alt="image-20230408165704167"></p>
+<p><strong>注意！一定不要手欠开启任何提示的服务，不然就会开始付费！</strong></p>
+<p>保持不动就不会付费。</p>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>登录就不用说了吧，我使用的是Xshell，所以只要新建窗口，输入Azure给的账号和密码就可以登陆了。（端口默认22）</p>
+<h3 id="使用root登录"><a href="#使用root登录" class="headerlink" title="使用root登录"></a>使用root登录</h3><p>Azure虚拟机是禁用了root通过ssh密码登录的，所以我们要先给root设置个密码，通过ssh登录到创建的自己的账户后，再登录root。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#如何修改root密码并用root登录</span></span><br><span class="line"><span class="comment">#登录到服务器后，试用如下命令修改root密码就可以登录啦</span></span><br><span class="line">$ sudo passwd root</span><br><span class="line"><span class="comment">#修改密码为自己想要的密码</span></span><br><span class="line">$ su</span><br><span class="line"><span class="comment">#输入密码后就切换为root用户了</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="设置免密码登录"><a href="#设置免密码登录" class="headerlink" title="设置免密码登录"></a>设置免密码登录</h3><p>我使用的是Xshell，这样进行设置</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408143959587.png" alt="image-20230408143959587"></p>
+<p>新建用户密钥生成向导，然后基本上保持默认就可以了</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144100634.png" alt="image-20230408144100634"></p>
+<p>然后下一步</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144122554.png" alt="image-20230408144122554"></p>
+<p>然后输入密码（建议输入）</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144155155.png" alt="image-20230408144155155"></p>
+<p>然后可以保存公钥或者保存为文件。</p>
+<p>然后使用Xftp将其传输到服务器中，移动到~&#x2F;.ssh目录下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">mv</span> id_rsa_2048.pub ~/.ssh/</span><br><span class="line">$ <span class="built_in">cd</span> ~/.ssh</span><br><span class="line">$ <span class="built_in">cat</span> id_rsa_2048.pub &gt;&gt;authorized_keys</span><br><span class="line"><span class="comment">#.ssh和authorized_keys的权限要正确</span></span><br><span class="line">$ <span class="built_in">chmod</span> 700 .ssh</span><br><span class="line">$ <span class="built_in">chmod</span> 600 .ssh/authorized_keys</span><br><span class="line"><span class="comment">#OK！</span></span><br></pre></td></tr></table></figure>
+
+<p>下面通过Xshell使用密钥登录</p>
+<p>选择Public Key</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144537655.png" alt="image-20230408144537655"></p>
+<p>然后输入账号密码，点击确定</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408144602217.png" alt="image-20230408144602217"></p>
+<p>回去可以把密码删除，把password选项取消勾选，就只能通过密钥登录啦！</p>
+<p>另外，要记得把<code>/etc/ssh/sshd_config</code>下的</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PasswordAuthentication yes  -&gt; no</span><br></pre></td></tr></table></figure>
+
+<p>然后重启ssh服务</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ systemctl restart sshd.service</span><br></pre></td></tr></table></figure>
+
+<p>即可！下面就只能用密钥登录了。</p>
+<h3 id="设置登录端口仅自己的IP访问"><a href="#设置登录端口仅自己的IP访问" class="headerlink" title="设置登录端口仅自己的IP访问"></a>设置登录端口仅自己的IP访问</h3><p>打开Azure网络管理面板，修改相关规则，设置为仅自己的IP地址。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230408170249193.png" alt="image-20230408170249193"></p>
+<p>设置成这样，保存就可以了，不要动其他的地方。</p>
+<p>可以使用自己的虚拟机啦，每个月据传有15&#x2F;20G免费流量，多的要付费，对于个人来说，用上那个100刀的免费额度，每个月有75-80G左右，对我来说是够用了。</p>
+]]></content>
+      <categories>
+        <category>Virtual Machine</category>
+      </categories>
+      <tags>
+        <tag>VPS</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Github学生认证记录</title>
     <url>/2023/04/02/Github%E5%AD%A6%E7%94%9F%E8%AE%A4%E8%AF%81%E7%94%B3%E8%AF%B7%E8%AE%B0%E5%BD%95/</url>
     <content><![CDATA[<p>最近github copliot很火爆，因为它编程的帮助功能很好用。</p>
@@ -61,36 +183,66 @@
       </tags>
   </entry>
   <entry>
-    <title>Cloudflare自选ip</title>
-    <url>/2023/05/18/Cloudflare%E8%87%AA%E9%80%89ip/</url>
-    <content><![CDATA[<p>使用自选ip实现cdn加速</p>
-<span id="more"></span>
+    <title>基于Github的个人博客网站使用https协议</title>
+    <url>/2023/04/14/Github%E5%8D%9A%E5%AE%A2-%E4%BD%BF%E7%94%A8https%E5%8D%8F%E8%AE%AE/</url>
+    <content><![CDATA[<p>在访问自己的网站时，网页经常提示http连接不安全。</p>
+<p>今天就通过设置，将http协议改为https，去除连接不安全。</p>
+ <span id="more"></span>
 
-<h2 id="事前准备"><a href="#事前准备" class="headerlink" title="事前准备"></a>事前准备</h2><p>1个解析好的Cloudflare域名</p>
-<p>第三方注册商 这里用的是<a href="https://www.mnn.tw/panel/user/index">梦牛网络</a></p>
-<p>解析地址：gn.cfsaas.ltd</p>
-<p><a href="https://www.cloudflare-cn.com/?ref=dhs.zsyts.cn">Cloudflare中文网</a>账号</p>
-<h2 id="更改DNS"><a href="#更改DNS" class="headerlink" title="更改DNS"></a>更改DNS</h2><p>Cloudflare登录到账号后，找到已经注册好的域名：</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230518084516549.png" alt="image-20230518084516549"></p>
-<p>记住域名地址<code>domin.com</code></p>
-<p>然后我们进入梦牛网络的控制台，绑定Cloudflare账号</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230518105231285.png" alt="image-20230518105231285"></p>
-<p>进入域名列表-&gt;进行域名解析，解析到自己的主机地址</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230518105809339.png" alt="image-20230518105809339"></p>
-<p>进入自己的域名注册商（我这里是腾讯云），将DNS改回自己的注册商。</p>
-<p>然后添加CNAME记录，指向解析地址即可。</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230518110104333.png" alt="image-20230518110104333"></p>
-<p>等待地址刷新后，即可正常访问，测一下速度大概在60ms左右，很不错了。</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230518110243912.png" alt="image-20230518110243912"></p>
-<p>本文依据：<a href="https://blog.csdn.net/qq_17754023/article/details/129057864">https://blog.csdn.net/qq_17754023/article/details/129057864</a></p>
+<h2 id="第一步：Github开启enforce-https"><a href="#第一步：Github开启enforce-https" class="headerlink" title="第一步：Github开启enforce https"></a>第一步：Github开启enforce https</h2><p>从Github开启https非常简单</p>
+<p>找到自己的仓库：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173517899.png" alt="image-20230414173517899"></p>
+<p>进入仓库项目的Settings-&gt;Github pages：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173616449.png" alt="image-20230414173616449"></p>
+<p>往下滑滑滑</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414173701977.png" alt="image-20230414173701977"></p>
+<p>我是直接开启就可以，看到有人说这个按钮是灰色的，如是灰色的解决方法：</p>
+<blockquote>
+<p>那么如果如果之前已经开启了自定义域名， <code>enforce HTTPS</code>  无法勾选且怎么办？</p>
+<p>按照官方提示，进行如下操作：</p>
+<ol>
+<li><p>把 Custom domain 中的值清空，并点击 <code>Save</code>  进行保存；</p>
+</li>
+<li><p>在 Custom domain 中的填入之前清空的值，我这里是 <code>likfe.com</code> ，填入后点击保存；</p>
+</li>
+<li><p>尝试在浏览器里主动访问 域名，地址要根据自己的情况，注意协议类型是 https，正确情况下是能正常访问的；</p>
+</li>
+<li><p>刷新项目设置页，如果  <code>enforce HTTPS</code>  可勾选，勾选即可；</p>
+</li>
+<li><p>如果  <code>enforce HTTPS</code>  不可勾选，并且提示  <code>Not yet available for your site because the certificate has not finished being issued”</code> ，说明证书尚未申请完成，等待一天即可。</p>
+<p>转载自<a href="https://cloud.tencent.com/developer/user/1078698">他叫自己MR.张</a></p>
+</li>
+</ol>
+</blockquote>
+<h3 id="出现http和https混合内容"><a href="#出现http和https混合内容" class="headerlink" title="出现http和https混合内容"></a>出现http和https混合内容</h3><p>这样设置完成后，我出现了</p>
+<p><code>xed Content: The page at &#39;&lt;URL&gt;&#39; was loaded over HTTPS, but requested an insecure element &#39;&lt;URL&gt;&#39;. ....</code></p>
+<p>这个错误原因是因为我们访问域名用的是https流量，但是引用图片资源却是用的http流量，这会导致图片无法查看。</p>
+<p>于是我们需要去给我们的静态资源配置https证书，由于我的图片是存在七牛云的图床中，所以我进入七牛云配置一下自己的图床。</p>
+<h2 id="第二步：配置https证书"><a href="#第二步：配置https证书" class="headerlink" title="第二步：配置https证书"></a>第二步：配置https证书</h2><p>进入<a href="https://portal.qiniu.com/certificate/ssl">七牛云证书管理</a>，去申请ssl证书</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174540614.png" alt="image-20230414174540614"></p>
+<p>DV单域名证书是免费的，所以我们购买这个证书：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174650420.png"></p>
+<p>核对信息并支付，一定要是0元哈。</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174710391.png" alt="image-20230414174710391"></p>
+<p>下面我们对信息进行补全：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414174806248.png" alt="image-20230414174806248"></p>
+<p>公司信息可以瞎填一下，毕竟我们是个人，只要填满了申请CA证书就可以了。</p>
+<p>补充好了之后，我们就可以配置DNS信息了：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414172535082.png" alt="image-20230414172535082"></p>
+<p>在自己的控制台，我是腾讯云，按照要求的解析配置：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175202848.png" alt="image-20230414175202848"></p>
+<p>解析好后，域名验证一下，验证好了后等待CA机构审核，审核好后就自动配置好证书了，也可以在域名管理中修改：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175509903.png" alt="image-20230414175509903"></p>
+<p>我们还可以在域名管理设置一下防盗链白名单，防止其他人盗走我们的图片：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414175600770.png" alt="image-20230414175600770"></p>
+<p>好了，现在访问自己的网址，可以发现有一把小锁了：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230414175953704.png" alt="image-20230414175953704"></p>
 ]]></content>
       <categories>
-        <category>VPS</category>
+        <category>Blog</category>
       </categories>
       <tags>
-        <tag>Cloudflare</tag>
-        <tag>DNS</tag>
-        <tag>IP</tag>
+        <tag>博客小站</tag>
       </tags>
   </entry>
   <entry>
@@ -186,40 +338,6 @@
       </categories>
       <tags>
         <tag>图床设置</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>hexo发生error：spawn failed错误的解决方法</title>
-    <url>/2023/03/27/hexo%E5%8F%91%E7%94%9Ferror%EF%BC%9Aspawn%20failed%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<p>spawn failed错误的解决方法</p>
-<span id="more"></span>
-
-<p>问题描述：<br>先是出现错误：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">error：spawn failed...</span><br></pre></td></tr></table></figure>
-
-<p>然后经过一些博客的操作会出现以下问题：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fatal: cannot lock ref &#x27;HEAD&#x27;: unable to resolve reference HEAD: Invalid argument error: src refspec</span><br></pre></td></tr></table></figure>
-
-<p>或者：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">error: src refspec HEAD does not match any.等等</span><br></pre></td></tr></table></figure>
-
-<p>总结一下：</p>
-<p>问题大多是因为git 进行push或者hexo d的时候改变了一些.deploy_git文件下的内容。</p>
-<p>解决办法：</p>
-<ol>
-<li>删除.deploy_git文件夹;</li>
-<li>输入git config –global core.autocrlf false</li>
-<li>然后，依次执行：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p>问题解决。暴力直接，有效。<br>————————————————<br>本文转载于<a href="https://blog.csdn.net/HTL2018">HuangTLhit</a>的文章，原文链接：<a href="https://blog.csdn.net/HTL2018/article/details/106876940">https://blog.csdn.net/HTL2018/article/details/106876940</a></p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>解决报错</tag>
       </tags>
   </entry>
   <entry>
@@ -356,6 +474,105 @@
       </tags>
   </entry>
   <entry>
+    <title>hexo发生error：spawn failed错误的解决方法</title>
+    <url>/2023/03/27/hexo%E5%8F%91%E7%94%9Ferror%EF%BC%9Aspawn%20failed%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>spawn failed错误的解决方法</p>
+<span id="more"></span>
+
+<p>问题描述：<br>先是出现错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">error：spawn failed...</span><br></pre></td></tr></table></figure>
+
+<p>然后经过一些博客的操作会出现以下问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fatal: cannot lock ref &#x27;HEAD&#x27;: unable to resolve reference HEAD: Invalid argument error: src refspec</span><br></pre></td></tr></table></figure>
+
+<p>或者：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">error: src refspec HEAD does not match any.等等</span><br></pre></td></tr></table></figure>
+
+<p>总结一下：</p>
+<p>问题大多是因为git 进行push或者hexo d的时候改变了一些.deploy_git文件下的内容。</p>
+<p>解决办法：</p>
+<ol>
+<li>删除.deploy_git文件夹;</li>
+<li>输入git config –global core.autocrlf false</li>
+<li>然后，依次执行：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>问题解决。暴力直接，有效。<br>————————————————<br>本文转载于<a href="https://blog.csdn.net/HTL2018">HuangTLhit</a>的文章，原文链接：<a href="https://blog.csdn.net/HTL2018/article/details/106876940">https://blog.csdn.net/HTL2018/article/details/106876940</a></p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>解决报错</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>通过修改注册表使用office copilot</title>
+    <url>/2023/03/30/office%20copilot%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>通过修改注册表的方式提前体验office copilot</p>
+<span id="more"></span>
+
+<p><strong>2023年4月14日更新：</strong></p>
+<p><strong>此方法已经失效了，现在即使注册表正确，也不会显示copilot，等待正式版本吧。</strong></p>
+<h1 id="通过修改注册表使用office-copilot"><a href="#通过修改注册表使用office-copilot" class="headerlink" title="通过修改注册表使用office copilot"></a>通过修改注册表使用office copilot</h1><p>学习于：<a href="https://www.cnblogs.com/ranxi169/p/17272151.html">https://www.cnblogs.com/ranxi169/p/17272151.html</a></p>
+<p>以及：<a href="https://www.bilibili.com/read/cv22739951/">https://www.bilibili.com/read/cv22739951/</a></p>
+<p>第一步要确定你的Mcrosoft365的版本，只有个人版、家庭版和企业版（E5）才可以用（据说是这样，我是买的企业版。）</p>
+<h2 id="1-先退出预览体验计划"><a href="#1-先退出预览体验计划" class="headerlink" title="1. 先退出预览体验计划"></a>1. 先退出预览体验计划</h2><p>如果你出现下一步中的修改注册表的</p>
+<p><strong>UpdateChannel</strong>的数据一直自动修改成原来的数值，请一定要进行这一步</p>
+<p>在搜搜框搜索预览体验计划：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230330203047880.png" alt="image-20230330203047880"></p>
+<p>然后取消掉勾勾：</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E5%8F%96%E6%B6%88%E9%A2%84%E8%A7%88%E4%BD%93%E9%AA%8C%E8%AE%A1%E5%88%92.png" alt="取消预览体验计划"></p>
+<p>然后再修改注册表</p>
+<h2 id="2-修改注册表以更新word到2305"><a href="#2-修改注册表以更新word到2305" class="headerlink" title="2. 修改注册表以更新word到2305"></a>2. 修改注册表以更新word到2305</h2><p>首先打开注册表编辑器：</p>
+<p>win+R打开运行后输入regedit</p>
+<p>进入到注册表的</p>
+<blockquote>
+<p>计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\ClickToRun\Configuration</p>
+</blockquote>
+<p>修改以下内容</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E6%B3%A8%E5%86%8C%E8%A1%A8%E4%BF%AE%E6%94%B911.png" alt="注册表修改11"></p>
+<blockquote>
+<p>频道和ID对应关系，转载自<a href="https://www.cnblogs.com/ranxi169/p/17272151.html">孤飞</a></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AudienceId                           | AudienceData       | Channel</span><br><span class="line">EA4A4090-DE26-49D7-93C1-91BFF9E53FC3 | Dogfood::DevMain</span><br><span class="line">F3260CF1-A92C-4C75-B02E-D64C0A86A968 | Dogfood::CC</span><br><span class="line">834504CC-DC55-4C6D-9E71-E024D0253F6D | Dogfood::FRDC</span><br><span class="line">C4A7726F-06EA-48E2-A13A-9D78849EB706 | Dogfood::DCEXT</span><br><span class="line">B61285DD-D9F7-41F2-9757-8F61CBA4E9C8 | Microsoft::DevMain</span><br><span class="line">5462EEE5-1E97-495B-9370-853CD873BB07 | Microsoft::CC</span><br><span class="line">9A3B7FF2-58ED-40FD-ADD5-1E5158059D1C | Microsoft::FRDC</span><br><span class="line">F4F024C8-D611-4748-A7E0-02B6E754C0FE | Microsoft::DC</span><br><span class="line">1D2D2EA6-1680-4C56-AC58-A441C8C24FF9 | Microsoft::LTSC</span><br><span class="line">5440FD1F-7ECB-4221-8110-145EFAA6372F | Insiders::DevMain  | Beta</span><br><span class="line">64256AFE-F5D9-4F86-8936-8840A6A4F5BE | Insiders::CC       | Current Preview</span><br><span class="line">B8F9B850-328D-4355-9145-C59439A0C4CF | Insiders::FRDC     | Semi-Annual Preview</span><br><span class="line">492350F6-3A01-4F97-B9C0-C7C6DDF67D60 | Production::CC     | Current</span><br><span class="line">55336B82-A18D-4DD6-B5F6-9E5095C314A6 | Production::MEC    | Monthly Enterprise</span><br><span class="line">7FFBC6BF-BC32-4F92-8982-F9DD17FD3114 | Production::DC     | Semi-Annual</span><br><span class="line">F2E724C1-748F-4B47-8FB8-8E0D210E9208 | Production::LTSC   | Perpetual2019</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>将以下内容的值修改</p>
+<p>AudienceData -&gt; Dogfood::DevMain</p>
+<p>AudienceID      -&gt; ea4a4090-de26-49d7-93c1-91bff9e53fc3</p>
+<p>CDNbaseurl     -&gt; <a href="http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3">http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3</a></p>
+<p>UpdateChannel与Updateurl -&gt; <a href="http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3">http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3</a></p>
+<h2 id="3-更新word"><a href="#3-更新word" class="headerlink" title="3. 更新word"></a>3. 更新word</h2><p>打开一个随便word文档</p>
+<p>文件-&gt;账户-&gt;更新</p>
+<p><img src="http://qiniu.jsblog.fun//img/word%E6%9B%B4%E6%96%B0.png" alt="word更新"></p>
+<p>应该会自动进行更新，将版本更新到2305：</p>
+<p><img src="http://qiniu.jsblog.fun//img/2305.png" alt="2305"></p>
+<h2 id="4-修改注册表以开启copliot"><a href="#4-修改注册表以开启copliot" class="headerlink" title="4. 修改注册表以开启copliot"></a>4. 修改注册表以开启copliot</h2><p>进入注册表中的目录：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">计算机\HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\ExternalFeatureOverrides\word</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>直接放在地址栏里就可以，我当时是看不到这个位置的。</p>
+</blockquote>
+<p>新建一个字符串&#x2F;值：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230330205328747.png" alt="image-20230330205328747"></p>
+<blockquote>
+<p>数值名称：Microsoft.Office.Word.CoPilotExperiment   数值数据：true</p>
+</blockquote>
+<p>至此，重启word应该就能够使用copliot了。</p>
+<h2 id="5-正式使用copliot"><a href="#5-正式使用copliot" class="headerlink" title="5. 正式使用copliot"></a>5. 正式使用copliot</h2><p>重启之后，出现copliot即为成功</p>
+<p><img src="http://qiniu.jsblog.fun//img/L01I2@%7D%5BJPK7FBSGEKK%5DBMC.png" alt="L01I2@}[JPK7FBSGEKK]BMC"></p>
+<p>但是美中不足的是，现在的copliot只能用英语，而且我测试的时候，感觉copliot比较智障。</p>
+<p><img src="http://qiniu.jsblog.fun//img/%E6%AD%A3%E5%BC%8F%E4%BD%BF%E7%94%A8.png" alt="正式使用"></p>
+<p>至此，享受你的Copliot吧！</p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>office copilot</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Windows server+v2ray+tls+wb+nginx代理服务器搭建</title>
     <url>/2023/04/09/windows%20server+TLS+websocket+nginx/</url>
     <content><![CDATA[<p>使用windows server 2012 完成v2ray+tls+wb+nginx的搭建</p>
@@ -446,364 +663,6 @@
       </categories>
       <tags>
         <tag>VPS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>通过修改注册表使用office copilot</title>
-    <url>/2023/03/30/office%20copilot%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>通过修改注册表的方式提前体验office copilot</p>
-<span id="more"></span>
-
-<p><strong>2023年4月14日更新：</strong></p>
-<p><strong>此方法已经失效了，现在即使注册表正确，也不会显示copilot，等待正式版本吧。</strong></p>
-<h1 id="通过修改注册表使用office-copilot"><a href="#通过修改注册表使用office-copilot" class="headerlink" title="通过修改注册表使用office copilot"></a>通过修改注册表使用office copilot</h1><p>学习于：<a href="https://www.cnblogs.com/ranxi169/p/17272151.html">https://www.cnblogs.com/ranxi169/p/17272151.html</a></p>
-<p>以及：<a href="https://www.bilibili.com/read/cv22739951/">https://www.bilibili.com/read/cv22739951/</a></p>
-<p>第一步要确定你的Mcrosoft365的版本，只有个人版、家庭版和企业版（E5）才可以用（据说是这样，我是买的企业版。）</p>
-<h2 id="1-先退出预览体验计划"><a href="#1-先退出预览体验计划" class="headerlink" title="1. 先退出预览体验计划"></a>1. 先退出预览体验计划</h2><p>如果你出现下一步中的修改注册表的</p>
-<p><strong>UpdateChannel</strong>的数据一直自动修改成原来的数值，请一定要进行这一步</p>
-<p>在搜搜框搜索预览体验计划：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230330203047880.png" alt="image-20230330203047880"></p>
-<p>然后取消掉勾勾：</p>
-<p><img src="http://qiniu.jsblog.fun//img/%E5%8F%96%E6%B6%88%E9%A2%84%E8%A7%88%E4%BD%93%E9%AA%8C%E8%AE%A1%E5%88%92.png" alt="取消预览体验计划"></p>
-<p>然后再修改注册表</p>
-<h2 id="2-修改注册表以更新word到2305"><a href="#2-修改注册表以更新word到2305" class="headerlink" title="2. 修改注册表以更新word到2305"></a>2. 修改注册表以更新word到2305</h2><p>首先打开注册表编辑器：</p>
-<p>win+R打开运行后输入regedit</p>
-<p>进入到注册表的</p>
-<blockquote>
-<p>计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Office\ClickToRun\Configuration</p>
-</blockquote>
-<p>修改以下内容</p>
-<p><img src="http://qiniu.jsblog.fun//img/%E6%B3%A8%E5%86%8C%E8%A1%A8%E4%BF%AE%E6%94%B911.png" alt="注册表修改11"></p>
-<blockquote>
-<p>频道和ID对应关系，转载自<a href="https://www.cnblogs.com/ranxi169/p/17272151.html">孤飞</a></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">AudienceId                           | AudienceData       | Channel</span><br><span class="line">EA4A4090-DE26-49D7-93C1-91BFF9E53FC3 | Dogfood::DevMain</span><br><span class="line">F3260CF1-A92C-4C75-B02E-D64C0A86A968 | Dogfood::CC</span><br><span class="line">834504CC-DC55-4C6D-9E71-E024D0253F6D | Dogfood::FRDC</span><br><span class="line">C4A7726F-06EA-48E2-A13A-9D78849EB706 | Dogfood::DCEXT</span><br><span class="line">B61285DD-D9F7-41F2-9757-8F61CBA4E9C8 | Microsoft::DevMain</span><br><span class="line">5462EEE5-1E97-495B-9370-853CD873BB07 | Microsoft::CC</span><br><span class="line">9A3B7FF2-58ED-40FD-ADD5-1E5158059D1C | Microsoft::FRDC</span><br><span class="line">F4F024C8-D611-4748-A7E0-02B6E754C0FE | Microsoft::DC</span><br><span class="line">1D2D2EA6-1680-4C56-AC58-A441C8C24FF9 | Microsoft::LTSC</span><br><span class="line">5440FD1F-7ECB-4221-8110-145EFAA6372F | Insiders::DevMain  | Beta</span><br><span class="line">64256AFE-F5D9-4F86-8936-8840A6A4F5BE | Insiders::CC       | Current Preview</span><br><span class="line">B8F9B850-328D-4355-9145-C59439A0C4CF | Insiders::FRDC     | Semi-Annual Preview</span><br><span class="line">492350F6-3A01-4F97-B9C0-C7C6DDF67D60 | Production::CC     | Current</span><br><span class="line">55336B82-A18D-4DD6-B5F6-9E5095C314A6 | Production::MEC    | Monthly Enterprise</span><br><span class="line">7FFBC6BF-BC32-4F92-8982-F9DD17FD3114 | Production::DC     | Semi-Annual</span><br><span class="line">F2E724C1-748F-4B47-8FB8-8E0D210E9208 | Production::LTSC   | Perpetual2019</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>将以下内容的值修改</p>
-<p>AudienceData -&gt; Dogfood::DevMain</p>
-<p>AudienceID      -&gt; ea4a4090-de26-49d7-93c1-91bff9e53fc3</p>
-<p>CDNbaseurl     -&gt; <a href="http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3">http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3</a></p>
-<p>UpdateChannel与Updateurl -&gt; <a href="http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3">http://officecdn.microsoft.com/pr/ea4a4090-de26-49d7-93c1-91bff9e53fc3</a></p>
-<h2 id="3-更新word"><a href="#3-更新word" class="headerlink" title="3. 更新word"></a>3. 更新word</h2><p>打开一个随便word文档</p>
-<p>文件-&gt;账户-&gt;更新</p>
-<p><img src="http://qiniu.jsblog.fun//img/word%E6%9B%B4%E6%96%B0.png" alt="word更新"></p>
-<p>应该会自动进行更新，将版本更新到2305：</p>
-<p><img src="http://qiniu.jsblog.fun//img/2305.png" alt="2305"></p>
-<h2 id="4-修改注册表以开启copliot"><a href="#4-修改注册表以开启copliot" class="headerlink" title="4. 修改注册表以开启copliot"></a>4. 修改注册表以开启copliot</h2><p>进入注册表中的目录：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">计算机\HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Common\ExperimentConfigs\ExternalFeatureOverrides\word</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>直接放在地址栏里就可以，我当时是看不到这个位置的。</p>
-</blockquote>
-<p>新建一个字符串&#x2F;值：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230330205328747.png" alt="image-20230330205328747"></p>
-<blockquote>
-<p>数值名称：Microsoft.Office.Word.CoPilotExperiment   数值数据：true</p>
-</blockquote>
-<p>至此，重启word应该就能够使用copliot了。</p>
-<h2 id="5-正式使用copliot"><a href="#5-正式使用copliot" class="headerlink" title="5. 正式使用copliot"></a>5. 正式使用copliot</h2><p>重启之后，出现copliot即为成功</p>
-<p><img src="http://qiniu.jsblog.fun//img/L01I2@%7D%5BJPK7FBSGEKK%5DBMC.png" alt="L01I2@}[JPK7FBSGEKK]BMC"></p>
-<p>但是美中不足的是，现在的copliot只能用英语，而且我测试的时候，感觉copliot比较智障。</p>
-<p><img src="http://qiniu.jsblog.fun//img/%E6%AD%A3%E5%BC%8F%E4%BD%BF%E7%94%A8.png" alt="正式使用"></p>
-<p>至此，享受你的Copliot吧！</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>office copilot</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>基于Github的个人博客网站使用https协议</title>
-    <url>/2023/04/14/Github%E5%8D%9A%E5%AE%A2-%E4%BD%BF%E7%94%A8https%E5%8D%8F%E8%AE%AE/</url>
-    <content><![CDATA[<p>在访问自己的网站时，网页经常提示http连接不安全。</p>
-<p>今天就通过设置，将http协议改为https，去除连接不安全。</p>
- <span id="more"></span>
-
-<h2 id="第一步：Github开启enforce-https"><a href="#第一步：Github开启enforce-https" class="headerlink" title="第一步：Github开启enforce https"></a>第一步：Github开启enforce https</h2><p>从Github开启https非常简单</p>
-<p>找到自己的仓库：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173517899.png" alt="image-20230414173517899"></p>
-<p>进入仓库项目的Settings-&gt;Github pages：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173616449.png" alt="image-20230414173616449"></p>
-<p>往下滑滑滑</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414173701977.png" alt="image-20230414173701977"></p>
-<p>我是直接开启就可以，看到有人说这个按钮是灰色的，如是灰色的解决方法：</p>
-<blockquote>
-<p>那么如果如果之前已经开启了自定义域名， <code>enforce HTTPS</code>  无法勾选且怎么办？</p>
-<p>按照官方提示，进行如下操作：</p>
-<ol>
-<li><p>把 Custom domain 中的值清空，并点击 <code>Save</code>  进行保存；</p>
-</li>
-<li><p>在 Custom domain 中的填入之前清空的值，我这里是 <code>likfe.com</code> ，填入后点击保存；</p>
-</li>
-<li><p>尝试在浏览器里主动访问 域名，地址要根据自己的情况，注意协议类型是 https，正确情况下是能正常访问的；</p>
-</li>
-<li><p>刷新项目设置页，如果  <code>enforce HTTPS</code>  可勾选，勾选即可；</p>
-</li>
-<li><p>如果  <code>enforce HTTPS</code>  不可勾选，并且提示  <code>Not yet available for your site because the certificate has not finished being issued”</code> ，说明证书尚未申请完成，等待一天即可。</p>
-<p>转载自<a href="https://cloud.tencent.com/developer/user/1078698">他叫自己MR.张</a></p>
-</li>
-</ol>
-</blockquote>
-<h3 id="出现http和https混合内容"><a href="#出现http和https混合内容" class="headerlink" title="出现http和https混合内容"></a>出现http和https混合内容</h3><p>这样设置完成后，我出现了</p>
-<p><code>xed Content: The page at &#39;&lt;URL&gt;&#39; was loaded over HTTPS, but requested an insecure element &#39;&lt;URL&gt;&#39;. ....</code></p>
-<p>这个错误原因是因为我们访问域名用的是https流量，但是引用图片资源却是用的http流量，这会导致图片无法查看。</p>
-<p>于是我们需要去给我们的静态资源配置https证书，由于我的图片是存在七牛云的图床中，所以我进入七牛云配置一下自己的图床。</p>
-<h2 id="第二步：配置https证书"><a href="#第二步：配置https证书" class="headerlink" title="第二步：配置https证书"></a>第二步：配置https证书</h2><p>进入<a href="https://portal.qiniu.com/certificate/ssl">七牛云证书管理</a>，去申请ssl证书</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174540614.png" alt="image-20230414174540614"></p>
-<p>DV单域名证书是免费的，所以我们购买这个证书：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174650420.png"></p>
-<p>核对信息并支付，一定要是0元哈。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174710391.png" alt="image-20230414174710391"></p>
-<p>下面我们对信息进行补全：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414174806248.png" alt="image-20230414174806248"></p>
-<p>公司信息可以瞎填一下，毕竟我们是个人，只要填满了申请CA证书就可以了。</p>
-<p>补充好了之后，我们就可以配置DNS信息了：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414172535082.png" alt="image-20230414172535082"></p>
-<p>在自己的控制台，我是腾讯云，按照要求的解析配置：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175202848.png" alt="image-20230414175202848"></p>
-<p>解析好后，域名验证一下，验证好了后等待CA机构审核，审核好后就自动配置好证书了，也可以在域名管理中修改：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175509903.png" alt="image-20230414175509903"></p>
-<p>我们还可以在域名管理设置一下防盗链白名单，防止其他人盗走我们的图片：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414175600770.png" alt="image-20230414175600770"></p>
-<p>好了，现在访问自己的网址，可以发现有一把小锁了：</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230414175953704.png" alt="image-20230414175953704"></p>
-]]></content>
-      <categories>
-        <category>Blog</category>
-      </categories>
-      <tags>
-        <tag>博客小站</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Azure微软云(Azure for students)虚拟机创建</title>
-    <url>/2023/04/08/Azure%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%9E%84%E5%BB%BA%E6%8C%87%E5%8D%97/</url>
-    <content><![CDATA[<p>使用Azure for students学生订阅创建虚拟机，避免踩坑。</p>
-<span id="more"></span>
-
-<h3 id="创建虚拟机"><a href="#创建虚拟机" class="headerlink" title="创建虚拟机"></a>创建虚拟机</h3><p>这里有几个坑，血泪教训，请一定要注意，不注意就会扣免费的100刀</p>
-<p>想看看自己的余额还有多少，可以进入<a href="https://www.microsoftazuresponsorships.com/Balance">Azure余额查询</a>然后点击Usage，就可以看自己扣钱的是哪些方面，</p>
-<p>首先，需要注意的是，如果从免费服务里创建两个虚拟机，地区会被限定，但是会提示免费750h：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408145948988.png" alt="image-20230408145948988"></p>
-<p>点击创建后会显示这个</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408150028958.png" alt="image-20230408150028958"></p>
-<p>区域会显示只有两个可以选择，而且这两个据我观察是延迟比较高的地区。</p>
-<p>想看看自己延迟最低的地区，可以利用这个<a href="https://www.azurespeed.com/Azure/Latency">Azure测速网站</a></p>
-<p>延迟高的地区虚拟机不好用，所以我们选择自己创建延迟低地区的资源</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408151015047.png" alt="image-20230408151015047"></p>
-<p>创建虚拟机</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408151049003.png" alt="image-20230408151049003"></p>
-<h4 id="第一个坑：修改可用性选项"><a href="#第一个坑：修改可用性选项" class="headerlink" title="第一个坑：修改可用性选项"></a>第一个坑：修改可用性选项</h4><p>由于Azure的静态IP地址也要收费的，如果不修改可用性选项就只能使用静态IP，这个是要付费的。</p>
-<p>Azure for students提供的是免费动态ip，所以我们要改成动态IP，而动态IP对可用性选项有要求。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408151253855.png" alt="image-20230408151253855"></p>
-<p>我们选择无需基础结构冗余</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408164710179.png" alt="image-20230408164710179"></p>
-<p>选择这个选项后才能选择动态IP。</p>
-<p>另外还有一点，就是大小必须选择B1s，不然也不会免费的。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408164846616.png" alt="image-20230408164846616"></p>
-<p>然后填自己的管理员账户，登录方式等。</p>
-<p>入站端口我选择的是SSH(22)，ssh是我最熟悉的登陆方式。</p>
-<p>然后进行下一步，查看磁盘。</p>
-<h4 id="第二个坑，磁盘大小必须为64G"><a href="#第二个坑，磁盘大小必须为64G" class="headerlink" title="第二个坑，磁盘大小必须为64G"></a>第二个坑，磁盘大小必须为64G</h4><p>进入磁盘选项后，一定要将磁盘重设为64GB，不然使用磁盘也会产生费用。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408165122802.png" alt="image-20230408165122802"></p>
-<p>然后进入网络选项卡，新建IP</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408165321524.png" alt="image-20230408165321524"></p>
-<p>将IP设置为动态IP</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408165405728.png" alt="image-20230408165405728"></p>
-<p>点击确定，查看并创建虚拟机。</p>
-<p>至此，虚拟机算是创建完了。</p>
-<h4 id="第三个坑，不要使用任何额外服务"><a href="#第三个坑，不要使用任何额外服务" class="headerlink" title="第三个坑，不要使用任何额外服务"></a>第三个坑，不要使用任何额外服务</h4><p>创建完成后，去所有资源选项卡看一下自己的所有资源，一定要把网络监视器给删除掉。这也是需要付费的，虽然价格不高。</p>
-<p>这些ID一般是NetworkerWatcher_ID，进入到NetworkerWatcherRG资源组，选中，点击右上角的删除，删除网络监视器，拒绝付费。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408165704167.png" alt="image-20230408165704167"></p>
-<p><strong>注意！一定不要手欠开启任何提示的服务，不然就会开始付费！</strong></p>
-<p>保持不动就不会付费。</p>
-<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>登录就不用说了吧，我使用的是Xshell，所以只要新建窗口，输入Azure给的账号和密码就可以登陆了。（端口默认22）</p>
-<h3 id="使用root登录"><a href="#使用root登录" class="headerlink" title="使用root登录"></a>使用root登录</h3><p>Azure虚拟机是禁用了root通过ssh密码登录的，所以我们要先给root设置个密码，通过ssh登录到创建的自己的账户后，再登录root。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#如何修改root密码并用root登录</span></span><br><span class="line"><span class="comment">#登录到服务器后，试用如下命令修改root密码就可以登录啦</span></span><br><span class="line">$ sudo passwd root</span><br><span class="line"><span class="comment">#修改密码为自己想要的密码</span></span><br><span class="line">$ su</span><br><span class="line"><span class="comment">#输入密码后就切换为root用户了</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="设置免密码登录"><a href="#设置免密码登录" class="headerlink" title="设置免密码登录"></a>设置免密码登录</h3><p>我使用的是Xshell，这样进行设置</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408143959587.png" alt="image-20230408143959587"></p>
-<p>新建用户密钥生成向导，然后基本上保持默认就可以了</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408144100634.png" alt="image-20230408144100634"></p>
-<p>然后下一步</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408144122554.png" alt="image-20230408144122554"></p>
-<p>然后输入密码（建议输入）</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408144155155.png" alt="image-20230408144155155"></p>
-<p>然后可以保存公钥或者保存为文件。</p>
-<p>然后使用Xftp将其传输到服务器中，移动到~&#x2F;.ssh目录下</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">mv</span> id_rsa_2048.pub ~/.ssh/</span><br><span class="line">$ <span class="built_in">cd</span> ~/.ssh</span><br><span class="line">$ <span class="built_in">cat</span> id_rsa_2048.pub &gt;&gt;authorized_keys</span><br><span class="line"><span class="comment">#.ssh和authorized_keys的权限要正确</span></span><br><span class="line">$ <span class="built_in">chmod</span> 700 .ssh</span><br><span class="line">$ <span class="built_in">chmod</span> 600 .ssh/authorized_keys</span><br><span class="line"><span class="comment">#OK！</span></span><br></pre></td></tr></table></figure>
-
-<p>下面通过Xshell使用密钥登录</p>
-<p>选择Public Key</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408144537655.png" alt="image-20230408144537655"></p>
-<p>然后输入账号密码，点击确定</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408144602217.png" alt="image-20230408144602217"></p>
-<p>回去可以把密码删除，把password选项取消勾选，就只能通过密钥登录啦！</p>
-<p>另外，要记得把<code>/etc/ssh/sshd_config</code>下的</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PasswordAuthentication yes  -&gt; no</span><br></pre></td></tr></table></figure>
-
-<p>然后重启ssh服务</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ systemctl restart sshd.service</span><br></pre></td></tr></table></figure>
-
-<p>即可！下面就只能用密钥登录了。</p>
-<h3 id="设置登录端口仅自己的IP访问"><a href="#设置登录端口仅自己的IP访问" class="headerlink" title="设置登录端口仅自己的IP访问"></a>设置登录端口仅自己的IP访问</h3><p>打开Azure网络管理面板，修改相关规则，设置为仅自己的IP地址。</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230408170249193.png" alt="image-20230408170249193"></p>
-<p>设置成这样，保存就可以了，不要动其他的地方。</p>
-<p>可以使用自己的虚拟机啦，每个月据传有15&#x2F;20G免费流量，多的要付费，对于个人来说，用上那个100刀的免费额度，每个月有75-80G左右，对我来说是够用了。</p>
-]]></content>
-      <categories>
-        <category>Virtual Machine</category>
-      </categories>
-      <tags>
-        <tag>VPS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>快速访问github</title>
-    <url>/2023/04/15/%E6%97%A0%E9%AD%94%E6%B3%95%E5%BF%AB%E9%80%9F%E8%AE%BF%E9%97%AEgithub/</url>
-    <content><![CDATA[<p>使用Github开源项目加快访问Github</p>
-<span id="more"></span>
-
-<p>作为一个小趴菜，每天要靠github上的大神项目才能过活</p>
-<p>但是访问github的速度竟然要靠运气！每天不是丢包就是在丢包的路上！</p>
-<p>这怎么能忍！</p>
-<p>于是我去搜索了github，看看怎么加速访问github，没想到还真被我找到了：<a href="https://github.com/dotnetcore/FastGithub">Fastgithub</a></p>
-<h2 id="Fastgithub的安装和使用"><a href="#Fastgithub的安装和使用" class="headerlink" title="Fastgithub的安装和使用"></a>Fastgithub的安装和使用</h2><p>进入github中<a href="https://github.com/dotnetcore/FastGithub">Fastgithub库的地址</a></p>
-<p>选择release，最新版的是<a href="https://github.com/dotnetcore/FastGithub/releases/tag/2.1.4">2.1.4</a></p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230415135639988.png"></p>
-<p>我的电脑是windows系统，所以我们选择windows版本：</p>
-<p><img src="https://qiniu.jsblog.fun//img/image-20230415135908744.png" alt="image-20230415135908744"></p>
-<p>下载到电脑上后，解压后得到以下文件：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230415190658792.png" alt="image-20230415190658792"></p>
-<p>点击运行<code>FastGithub.UI.exe</code>，即可进入图形化界面，可视化界面</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230415190819030.png" alt="image-20230415190819030"></p>
-<p>缺点是需要一直挂着，但是FastGithub提供了将FastGithub程序以服务方式进行的方式：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#开启fastgithub服务</span></span><br><span class="line">fastgithub.exe start</span><br><span class="line"><span class="comment">#关闭fastgithub服务</span></span><br><span class="line">fastgithub.exe stop</span><br></pre></td></tr></table></figure>
-
-<p>开启后，可以在任务管理器中发现后台运行的fastgithub，重启后依然有效，这样就实现了<strong>无感直连Github</strong>的方式啦</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230415190402475.png" alt="image-20230415190402475"></p>
-<p>以上就是Fastgithub的使用，个人使用下来目前还蛮舒服的，推荐Windows用户使用！</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>创建免费企业邮箱和使用Claude-in-slack</title>
-    <url>/2023/04/13/%E5%88%9B%E5%BB%BA%E4%BC%81%E4%B8%9A%E5%85%8D%E8%B4%B9%E9%82%AE%E7%AE%B1%E5%B9%B6%E4%BD%BF%E7%94%A8Claude-in-Slack/</url>
-    <content><![CDATA[<p>创建免费企业邮箱并使用由openai团队出走核心成员创建的claude</p>
-<span id="more"></span>
-
-<h2 id="创建免费企业邮箱"><a href="#创建免费企业邮箱" class="headerlink" title="创建免费企业邮箱"></a>创建免费企业邮箱</h2><h3 id="注册邮箱"><a href="#注册邮箱" class="headerlink" title="注册邮箱"></a>注册邮箱</h3><p>进入<a href="https://ym.163.com/">网易免费企业邮箱</a>，注册邮箱，输入手机号，发送验证码</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413160552514.png" alt="image-20230413160552514"></p>
-<p>然后设置管理员账号、密码以及域名等（可选有域名和无域名）</p>
-<p>然后登录邮箱，进入邮箱管理界面：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413160752926.png" alt="image-20230413160752926"></p>
-<h3 id="DNS解析和更换域名"><a href="#DNS解析和更换域名" class="headerlink" title="DNS解析和更换域名"></a>DNS解析和更换域名</h3><p>选择组织机构管理的域名管理，新增域名（如果注册的时候填域名了是有填入的域名的）：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413160910650.png" alt="image-20230413160910650"></p>
-<p>点击这个域名，按照它的要求进行DNS解析：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413161213979.png" alt="image-20230413161213979"></p>
-<p>第三步如果设置立即生效后会重新登录，此时登录名变成了：</p>
-<p><code>username@domain.com</code></p>
-<p>重新登录管理员账户，进入到这一步，开始进行第四步部署。</p>
-<p>点击查看设置方法后，选择各项要求，我这里用的是<a href="https://console.cloud.tencent.com/cns">腾讯云</a>，所以选择了其他域名注册商:</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413161306887.png" alt="image-20230413161306887"></p>
-<p>按照这样提交之后会显示如何进行DNS解析：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413161627930.png" alt="image-20230413161627930"></p>
-<p>按照其要求，在注册商的解析平台添加DNS解析，比如说：</p>
-<blockquote>
-<p>添加MX记录：</p>
-<p>XXX.com 优先级 <strong>5 XXXX.XXXX.com.</strong></p>
-</blockquote>
-<p>就需要在解析控制台添加（由于XXX.com是根域名，所以我们添加@代表根域名）：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413162109231.png" alt="image-20230413162109231"></p>
-<p>以此类推，按照网易DNS的需求，添加DNS解析即可。</p>
-<h3 id="进入邮箱"><a href="#进入邮箱" class="headerlink" title="进入邮箱"></a>进入邮箱</h3><p>设置完成后，即可进入到<a href="https://qy.163.com/login/?from=ym">网易云邮箱</a>以用户身份登录，注册成功：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413162356275.png" alt="image-20230413162356275"></p>
-<p>这样设置后，可以发给自己的个人邮箱试试收发功能是否能使用，一般配置正确的话都是没问题的。</p>
-<h2 id="使用Claude-in-Slack"><a href="#使用Claude-in-Slack" class="headerlink" title="使用Claude-in-Slack"></a>使用Claude-in-Slack</h2><p>进入<a href="https://www.anthropic.com/">ANTHROPIC</a>的官网，选择<a href="https://www.anthropic.com/claude-in-slack">Claude-in-slack</a>，Add to Slack</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163252134.png" alt="image-20230413163252134"></p>
-<p>然后创建一个新的工作区：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163343866.png" alt="image-20230413163343866"></p>
-<p>输入刚刚创建的企业邮箱：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163411570.png" alt="image-20230413163411570"></p>
-<p>输入发送的验证码-&gt;输入名称-&gt;输入频道名</p>
-<p>进入频道，选择浏览：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163557649.png" alt="image-20230413163557649"></p>
-<p>点击应用：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163625260.png" alt="image-20230413163625260"></p>
-<p>搜索<code>Claude</code>，然后将其添加到自己的工作区中，在工作区的应用栏即可找到：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163726917.png" alt="image-20230413163726917"></p>
-<p>第一次使用时会让你同意它的政策，点击Agree即可，下面就可以开始正式的对话了：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413163845886.png" alt="image-20230413163845886"></p>
-<p>享受Claude吧！据说该模型是Openai的核心成员出走后创建的新公司的模型。</p>
-<h2 id="申请Claude"><a href="#申请Claude" class="headerlink" title="申请Claude"></a>申请Claude</h2><p>既然已经创建了企业邮箱，拿都拿到了，本来Claude就要求企业邮箱，当然要拿来申请一下Claude试试了，万一通过了呢</p>
-<p>进入<a href="https://www.anthropic.com/product">Claude申请界面</a>：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413193226389.png" alt="image-20230413193226389"></p>
-<p>然后按照它的问题填写信息，填写的越多通过概率越高（大概，至少我目前还没通过）</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230413193348332.png" alt="image-20230413193348332"></p>
-<p>都填完之后，最后Submit即可！</p>
-]]></content>
-      <categories>
-        <category>Ai</category>
-      </categories>
-      <tags>
-        <tag>Claude</tag>
-        <tag>企业邮箱</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>实现阿里云盘实时同步本地文件</title>
-    <url>/2023/04/14/%E5%AE%9E%E7%8E%B0%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98%E5%90%8C%E6%AD%A5%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6/</url>
-    <content><![CDATA[<p>一个<strong>阿里云盘同步备份文件的免费好方法</strong></p>
-<span id="more"></span>
-
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在找本地文件的实时同步工具，想通过实时同步我的博客内容来保证博客内容实时有备份.</p>
-<p>然而试过了坚果云（纯纯流氓软件）、百度网盘、夸克网盘、OneDrive来同步本地本地文件，都觉得不是很好用</p>
-<ol>
-<li>坚果云：坚果云真的太流氓了，注册表和右键菜单永远卸载不干净，同步速度又慢，最后折腾了半天使用<a href="https://geekuninstaller.com/">GEEK</a>来卸载干净。</li>
-<li>百度网盘：上传速度慢，会员贵，我贫穷。</li>
-<li>夸克网盘：又限速，空间又小，不开会员非常难用，并且文件还容易丢。</li>
-<li>OneDrive：在国内限速！几乎不怎么动！本来很好用的，可惜是在国内。<a href="https://www.microsoft.com/zh-cn/microsoft-365/compare-china-global-versions-microsoft-365">世纪互联</a>的国内OneDrive据说很快，但是要付费。</li>
-<li>阿里云盘：主打不限速，但是同步备份功能要超级会员。我正好用学生认证拿到了1T空间，想着能不能用这个做点同步功能。</li>
-</ol>
-<h2 id="同步备份功能的实现"><a href="#同步备份功能的实现" class="headerlink" title="同步备份功能的实现"></a>同步备份功能的实现</h2><p>在Github发现一个非常好用的<a href="https://github.com/tickstep/aliyunpan">阿里云盘工具</a></p>
-<p><a href="https://github.com/tickstep/aliyunpan/releases">在这里</a>下载windows X64的版本，然后解压即可使用，无需安装。</p>
-<h3 id="开始使用aliyunpan"><a href="#开始使用aliyunpan" class="headerlink" title="开始使用aliyunpan"></a>开始使用aliyunpan</h3><p>双击解压之后的客户端：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414152706559.png" alt="image-20230414152706559"></p>
-<p>进入命令行界面：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414152933005.png" alt="image-20230414152933005"></p>
-<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>进行登录需要用到refresh token</p>
-<p>需要进入到<a href="https://www.aliyundrive.com/drive/">网盘网页版</a>获取：</p>
-<p><img src="http://qiniu.jsblog.fun//img/image-20230414154340275.png" alt="image-20230414154340275"></p>
-<p>复制token之后，在aliyunpan客户端中输入</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#登录</span></span><br><span class="line">aliyunpan&gt;/ login</span><br><span class="line"><span class="comment">#输入refresh token后即登录成功</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看一下有什么文件和工作目录</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">ls</span></span><br><span class="line"></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">pwd</span></span><br><span class="line"><span class="comment">#和网盘里的一样即可</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#列出当前账号</span></span><br><span class="line">aliyunpan&gt;/ unknown$ loglist</span><br><span class="line"><span class="comment">#获取当前账号</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">who</span></span><br></pre></td></tr></table></figure>
-
-<p>查验后确认是自己的账户之后先设置自动更新token：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aliyunpan&gt;/ unknown$ token update</span><br></pre></td></tr></table></figure>
-
-<h3 id="同步备份"><a href="#同步备份" class="headerlink" title="同步备份"></a>同步备份</h3><p>这些都设置完成后，启动官方的sync同步备份功能：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用命令行配置启动同步备份服务，将本地目录 D:\tickstep\Documents\设计文档 中的文件备份上传到云盘目录 /sync_drive/我的文档</span></span><br><span class="line"><span class="comment">#文件夹内容少时可直接上传</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span></span><br><span class="line"><span class="comment">#文件夹内容多则可以先扫描再上传</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span> -step scan</span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>等待命令运行后就可以发现云盘中确实是完成了自动备份</p>
-<p>自动备份功能需要一直运行云盘工具</p>
-<p>所以感觉运行在Linux服务器中就比较完美了。</p>
-<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>突然一想，我的博客是依靠于Github建立。</p>
-<p>我每次<code>hexo -d</code>将博客推送到我的Github账户上后，Github里我的项目就直接有一份备份了！</p>
-<p>我既然用的是windows个人系统，不能长时间开着我的电脑。</p>
-<p>而且Github中也一直有备份，那我一直想自动同步到阿里云盘，这有啥意义呢？</p>
-<p>不管如何，这肯定是一个<strong>同步备份文件的免费好方法</strong>了，就这样吧！</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>Github</tag>
-        <tag>阿里云盘</tag>
       </tags>
   </entry>
   <entry>
@@ -1092,6 +951,175 @@
       </tags>
   </entry>
   <entry>
+    <title>创建免费企业邮箱和使用Claude-in-slack</title>
+    <url>/2023/04/13/%E5%88%9B%E5%BB%BA%E4%BC%81%E4%B8%9A%E5%85%8D%E8%B4%B9%E9%82%AE%E7%AE%B1%E5%B9%B6%E4%BD%BF%E7%94%A8Claude-in-Slack/</url>
+    <content><![CDATA[<p>创建免费企业邮箱并使用由openai团队出走核心成员创建的claude</p>
+<span id="more"></span>
+
+<h2 id="创建免费企业邮箱"><a href="#创建免费企业邮箱" class="headerlink" title="创建免费企业邮箱"></a>创建免费企业邮箱</h2><h3 id="注册邮箱"><a href="#注册邮箱" class="headerlink" title="注册邮箱"></a>注册邮箱</h3><p>进入<a href="https://ym.163.com/">网易免费企业邮箱</a>，注册邮箱，输入手机号，发送验证码</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413160552514.png" alt="image-20230413160552514"></p>
+<p>然后设置管理员账号、密码以及域名等（可选有域名和无域名）</p>
+<p>然后登录邮箱，进入邮箱管理界面：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413160752926.png" alt="image-20230413160752926"></p>
+<h3 id="DNS解析和更换域名"><a href="#DNS解析和更换域名" class="headerlink" title="DNS解析和更换域名"></a>DNS解析和更换域名</h3><p>选择组织机构管理的域名管理，新增域名（如果注册的时候填域名了是有填入的域名的）：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413160910650.png" alt="image-20230413160910650"></p>
+<p>点击这个域名，按照它的要求进行DNS解析：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413161213979.png" alt="image-20230413161213979"></p>
+<p>第三步如果设置立即生效后会重新登录，此时登录名变成了：</p>
+<p><code>username@domain.com</code></p>
+<p>重新登录管理员账户，进入到这一步，开始进行第四步部署。</p>
+<p>点击查看设置方法后，选择各项要求，我这里用的是<a href="https://console.cloud.tencent.com/cns">腾讯云</a>，所以选择了其他域名注册商:</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413161306887.png" alt="image-20230413161306887"></p>
+<p>按照这样提交之后会显示如何进行DNS解析：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413161627930.png" alt="image-20230413161627930"></p>
+<p>按照其要求，在注册商的解析平台添加DNS解析，比如说：</p>
+<blockquote>
+<p>添加MX记录：</p>
+<p>XXX.com 优先级 <strong>5 XXXX.XXXX.com.</strong></p>
+</blockquote>
+<p>就需要在解析控制台添加（由于XXX.com是根域名，所以我们添加@代表根域名）：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413162109231.png" alt="image-20230413162109231"></p>
+<p>以此类推，按照网易DNS的需求，添加DNS解析即可。</p>
+<h3 id="进入邮箱"><a href="#进入邮箱" class="headerlink" title="进入邮箱"></a>进入邮箱</h3><p>设置完成后，即可进入到<a href="https://qy.163.com/login/?from=ym">网易云邮箱</a>以用户身份登录，注册成功：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413162356275.png" alt="image-20230413162356275"></p>
+<p>这样设置后，可以发给自己的个人邮箱试试收发功能是否能使用，一般配置正确的话都是没问题的。</p>
+<h2 id="使用Claude-in-Slack"><a href="#使用Claude-in-Slack" class="headerlink" title="使用Claude-in-Slack"></a>使用Claude-in-Slack</h2><p>进入<a href="https://www.anthropic.com/">ANTHROPIC</a>的官网，选择<a href="https://www.anthropic.com/claude-in-slack">Claude-in-slack</a>，Add to Slack</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163252134.png" alt="image-20230413163252134"></p>
+<p>然后创建一个新的工作区：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163343866.png" alt="image-20230413163343866"></p>
+<p>输入刚刚创建的企业邮箱：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163411570.png" alt="image-20230413163411570"></p>
+<p>输入发送的验证码-&gt;输入名称-&gt;输入频道名</p>
+<p>进入频道，选择浏览：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163557649.png" alt="image-20230413163557649"></p>
+<p>点击应用：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163625260.png" alt="image-20230413163625260"></p>
+<p>搜索<code>Claude</code>，然后将其添加到自己的工作区中，在工作区的应用栏即可找到：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163726917.png" alt="image-20230413163726917"></p>
+<p>第一次使用时会让你同意它的政策，点击Agree即可，下面就可以开始正式的对话了：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413163845886.png" alt="image-20230413163845886"></p>
+<p>享受Claude吧！据说该模型是Openai的核心成员出走后创建的新公司的模型。</p>
+<h2 id="申请Claude"><a href="#申请Claude" class="headerlink" title="申请Claude"></a>申请Claude</h2><p>既然已经创建了企业邮箱，拿都拿到了，本来Claude就要求企业邮箱，当然要拿来申请一下Claude试试了，万一通过了呢</p>
+<p>进入<a href="https://www.anthropic.com/product">Claude申请界面</a>：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413193226389.png" alt="image-20230413193226389"></p>
+<p>然后按照它的问题填写信息，填写的越多通过概率越高（大概，至少我目前还没通过）</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230413193348332.png" alt="image-20230413193348332"></p>
+<p>都填完之后，最后Submit即可！</p>
+]]></content>
+      <categories>
+        <category>Ai</category>
+      </categories>
+      <tags>
+        <tag>Claude</tag>
+        <tag>企业邮箱</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>实现阿里云盘实时同步本地文件</title>
+    <url>/2023/04/14/%E5%AE%9E%E7%8E%B0%E9%98%BF%E9%87%8C%E4%BA%91%E7%9B%98%E5%90%8C%E6%AD%A5%E6%9C%AC%E5%9C%B0%E6%96%87%E4%BB%B6/</url>
+    <content><![CDATA[<p>一个<strong>阿里云盘同步备份文件的免费好方法</strong></p>
+<span id="more"></span>
+
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在找本地文件的实时同步工具，想通过实时同步我的博客内容来保证博客内容实时有备份.</p>
+<p>然而试过了坚果云（纯纯流氓软件）、百度网盘、夸克网盘、OneDrive来同步本地本地文件，都觉得不是很好用</p>
+<ol>
+<li>坚果云：坚果云真的太流氓了，注册表和右键菜单永远卸载不干净，同步速度又慢，最后折腾了半天使用<a href="https://geekuninstaller.com/">GEEK</a>来卸载干净。</li>
+<li>百度网盘：上传速度慢，会员贵，我贫穷。</li>
+<li>夸克网盘：又限速，空间又小，不开会员非常难用，并且文件还容易丢。</li>
+<li>OneDrive：在国内限速！几乎不怎么动！本来很好用的，可惜是在国内。<a href="https://www.microsoft.com/zh-cn/microsoft-365/compare-china-global-versions-microsoft-365">世纪互联</a>的国内OneDrive据说很快，但是要付费。</li>
+<li>阿里云盘：主打不限速，但是同步备份功能要超级会员。我正好用学生认证拿到了1T空间，想着能不能用这个做点同步功能。</li>
+</ol>
+<h2 id="同步备份功能的实现"><a href="#同步备份功能的实现" class="headerlink" title="同步备份功能的实现"></a>同步备份功能的实现</h2><p>在Github发现一个非常好用的<a href="https://github.com/tickstep/aliyunpan">阿里云盘工具</a></p>
+<p><a href="https://github.com/tickstep/aliyunpan/releases">在这里</a>下载windows X64的版本，然后解压即可使用，无需安装。</p>
+<h3 id="开始使用aliyunpan"><a href="#开始使用aliyunpan" class="headerlink" title="开始使用aliyunpan"></a>开始使用aliyunpan</h3><p>双击解压之后的客户端：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414152706559.png" alt="image-20230414152706559"></p>
+<p>进入命令行界面：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414152933005.png" alt="image-20230414152933005"></p>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>进行登录需要用到refresh token</p>
+<p>需要进入到<a href="https://www.aliyundrive.com/drive/">网盘网页版</a>获取：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230414154340275.png" alt="image-20230414154340275"></p>
+<p>复制token之后，在aliyunpan客户端中输入</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#登录</span></span><br><span class="line">aliyunpan&gt;/ login</span><br><span class="line"><span class="comment">#输入refresh token后即登录成功</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看一下有什么文件和工作目录</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">ls</span></span><br><span class="line"></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">pwd</span></span><br><span class="line"><span class="comment">#和网盘里的一样即可</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#列出当前账号</span></span><br><span class="line">aliyunpan&gt;/ unknown$ loglist</span><br><span class="line"><span class="comment">#获取当前账号</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">who</span></span><br></pre></td></tr></table></figure>
+
+<p>查验后确认是自己的账户之后先设置自动更新token：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">aliyunpan&gt;/ unknown$ token update</span><br></pre></td></tr></table></figure>
+
+<h3 id="同步备份"><a href="#同步备份" class="headerlink" title="同步备份"></a>同步备份</h3><p>这些都设置完成后，启动官方的sync同步备份功能：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#使用命令行配置启动同步备份服务，将本地目录 D:\tickstep\Documents\设计文档 中的文件备份上传到云盘目录 /sync_drive/我的文档</span></span><br><span class="line"><span class="comment">#文件夹内容少时可直接上传</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span></span><br><span class="line"><span class="comment">#文件夹内容多则可以先扫描再上传</span></span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span> -step scan</span><br><span class="line">aliyunpan&gt;/ unknown$ <span class="built_in">sync</span> start -ldir <span class="string">&quot;D:\tickstep\Documents\设计文档&quot;</span> -pdir <span class="string">&quot;/sync_drive/我的文档&quot;</span> -mode <span class="string">&quot;upload&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>等待命令运行后就可以发现云盘中确实是完成了自动备份</p>
+<p>自动备份功能需要一直运行云盘工具</p>
+<p>所以感觉运行在Linux服务器中就比较完美了。</p>
+<h2 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h2><p>突然一想，我的博客是依靠于Github建立。</p>
+<p>我每次<code>hexo -d</code>将博客推送到我的Github账户上后，Github里我的项目就直接有一份备份了！</p>
+<p>我既然用的是windows个人系统，不能长时间开着我的电脑。</p>
+<p>而且Github中也一直有备份，那我一直想自动同步到阿里云盘，这有啥意义呢？</p>
+<p>不管如何，这肯定是一个<strong>同步备份文件的免费好方法</strong>了，就这样吧！</p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>阿里云盘</tag>
+        <tag>Github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>(win11)将新建markdown文件添加到鼠标菜单栏</title>
+    <url>/2023/03/21/%E5%B0%86%E6%96%B0%E5%BB%BAmarkdown%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0%E9%BC%A0%E6%A0%87%E8%8F%9C%E5%8D%95%E6%A0%8F/</url>
+    <content><![CDATA[<p>实现右键新建菜单栏有markdown文件</p>
+<span id="more"></span>
+
+<h2 id="方法一-注册表修改法"><a href="#方法一-注册表修改法" class="headerlink" title="方法一 注册表修改法"></a>方法一 注册表修改法</h2><p><a href="https://zhuanlan.zhihu.com/p/152310631">https://zhuanlan.zhihu.com/p/152310631</a></p>
+<p>经测试我不可以用</p>
+<h2 id="方法二-新建文本文档改后缀"><a href="#方法二-新建文本文档改后缀" class="headerlink" title="方法二 新建文本文档改后缀"></a>方法二 新建文本文档改后缀</h2><p>新建以下文本文档，将txt改为reg</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line">[HKEY_CLASSES_ROOT\.md]</span><br><span class="line">@=&quot;MarkdownFile&quot;</span><br><span class="line">&quot;PerceivedType&quot;=&quot;text&quot;</span><br><span class="line">&quot;Content Type&quot;=&quot;text/plain&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\.md\ShellNew]</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile]</span><br><span class="line">@=&quot;Markdown文档&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\DefaultIcon]</span><br><span class="line">@=&quot;%SystemRoot%\system32\imageres.dll,-102&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\shell]</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\shell\open]</span><br></pre></td></tr></table></figure>
+
+<p>运行后，不可用，依然没有新建markdown选项</p>
+<h2 id="方法三-这次搜索关键词为win11-右键新建markdown文件"><a href="#方法三-这次搜索关键词为win11-右键新建markdown文件" class="headerlink" title="方法三 这次搜索关键词为win11 右键新建markdown文件"></a>方法三 这次搜索关键词为win11 右键新建markdown文件</h2><p>经测试可行：<a href="https://blog.csdn.net/qq_53055033/article/details/127442997">https://blog.csdn.net/qq_53055033/article/details/127442997</a></p>
+<p>注意我是重启之后就可行了。</p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>markdown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>快速访问github</title>
+    <url>/2023/04/15/%E6%97%A0%E9%AD%94%E6%B3%95%E5%BF%AB%E9%80%9F%E8%AE%BF%E9%97%AEgithub/</url>
+    <content><![CDATA[<p>使用Github开源项目加快访问Github</p>
+<span id="more"></span>
+
+<p>作为一个小趴菜，每天要靠github上的大神项目才能过活</p>
+<p>但是访问github的速度竟然要靠运气！每天不是丢包就是在丢包的路上！</p>
+<p>这怎么能忍！</p>
+<p>于是我去搜索了github，看看怎么加速访问github，没想到还真被我找到了：<a href="https://github.com/dotnetcore/FastGithub">Fastgithub</a></p>
+<h2 id="Fastgithub的安装和使用"><a href="#Fastgithub的安装和使用" class="headerlink" title="Fastgithub的安装和使用"></a>Fastgithub的安装和使用</h2><p>进入github中<a href="https://github.com/dotnetcore/FastGithub">Fastgithub库的地址</a></p>
+<p>选择release，最新版的是<a href="https://github.com/dotnetcore/FastGithub/releases/tag/2.1.4">2.1.4</a></p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230415135639988.png"></p>
+<p>我的电脑是windows系统，所以我们选择windows版本：</p>
+<p><img src="https://qiniu.jsblog.fun//img/image-20230415135908744.png" alt="image-20230415135908744"></p>
+<p>下载到电脑上后，解压后得到以下文件：</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230415190658792.png" alt="image-20230415190658792"></p>
+<p>点击运行<code>FastGithub.UI.exe</code>，即可进入图形化界面，可视化界面</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230415190819030.png" alt="image-20230415190819030"></p>
+<p>缺点是需要一直挂着，但是FastGithub提供了将FastGithub程序以服务方式进行的方式：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#开启fastgithub服务</span></span><br><span class="line">fastgithub.exe start</span><br><span class="line"><span class="comment">#关闭fastgithub服务</span></span><br><span class="line">fastgithub.exe stop</span><br></pre></td></tr></table></figure>
+
+<p>开启后，可以在任务管理器中发现后台运行的fastgithub，重启后依然有效，这样就实现了<strong>无感直连Github</strong>的方式啦</p>
+<p><img src="http://qiniu.jsblog.fun//img/image-20230415190402475.png" alt="image-20230415190402475"></p>
+<p>以上就是Fastgithub的使用，个人使用下来目前还蛮舒服的，推荐Windows用户使用！</p>
+]]></content>
+      <categories>
+        <category>Daily</category>
+      </categories>
+      <tags>
+        <tag>Github</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>stable diffusion的colab部署</title>
     <url>/2023/04/01/%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8Ccolab%E4%BB%A5%E5%8F%8Astabble%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2/</url>
     <content><![CDATA[<p>本地化使用colab笔记本以及ai绘图软件的colab部署</p>
@@ -1145,28 +1173,6 @@
       </categories>
       <tags>
         <tag>Ai绘图</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>(win11)将新建markdown文件添加到鼠标菜单栏</title>
-    <url>/2023/03/21/%E5%B0%86%E6%96%B0%E5%BB%BAmarkdown%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0%E9%BC%A0%E6%A0%87%E8%8F%9C%E5%8D%95%E6%A0%8F/</url>
-    <content><![CDATA[<p>实现右键新建菜单栏有markdown文件</p>
-<span id="more"></span>
-
-<h2 id="方法一-注册表修改法"><a href="#方法一-注册表修改法" class="headerlink" title="方法一 注册表修改法"></a>方法一 注册表修改法</h2><p><a href="https://zhuanlan.zhihu.com/p/152310631">https://zhuanlan.zhihu.com/p/152310631</a></p>
-<p>经测试我不可以用</p>
-<h2 id="方法二-新建文本文档改后缀"><a href="#方法二-新建文本文档改后缀" class="headerlink" title="方法二 新建文本文档改后缀"></a>方法二 新建文本文档改后缀</h2><p>新建以下文本文档，将txt改为reg</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line">[HKEY_CLASSES_ROOT\.md]</span><br><span class="line">@=&quot;MarkdownFile&quot;</span><br><span class="line">&quot;PerceivedType&quot;=&quot;text&quot;</span><br><span class="line">&quot;Content Type&quot;=&quot;text/plain&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\.md\ShellNew]</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile]</span><br><span class="line">@=&quot;Markdown文档&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\DefaultIcon]</span><br><span class="line">@=&quot;%SystemRoot%\system32\imageres.dll,-102&quot;</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\shell]</span><br><span class="line">[HKEY_CLASSES_ROOT\MarkdownFile\shell\open]</span><br></pre></td></tr></table></figure>
-
-<p>运行后，不可用，依然没有新建markdown选项</p>
-<h2 id="方法三-这次搜索关键词为win11-右键新建markdown文件"><a href="#方法三-这次搜索关键词为win11-右键新建markdown文件" class="headerlink" title="方法三 这次搜索关键词为win11 右键新建markdown文件"></a>方法三 这次搜索关键词为win11 右键新建markdown文件</h2><p>经测试可行：<a href="https://blog.csdn.net/qq_53055033/article/details/127442997">https://blog.csdn.net/qq_53055033/article/details/127442997</a></p>
-<p>注意我是重启之后就可行了。</p>
-]]></content>
-      <categories>
-        <category>Daily</category>
-      </categories>
-      <tags>
-        <tag>markdown</tag>
       </tags>
   </entry>
 </search>
